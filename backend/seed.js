@@ -49,7 +49,7 @@ const seedData = async () => {
         category: "Footwear",
         stock: 25,
         imageUrl:
-          "https://via.placeholder.com/600x400.png?text=Urban+Runner+Sneakers",
+          "https://res.cloudinary.com/dvmm60i3d/image/upload/v1782441536/fdqlxufk7ieovxlfa9x9.png",
         rating: 4.5,
         numReviews: 18,
       },
@@ -61,7 +61,7 @@ const seedData = async () => {
         category: "Electronics",
         stock: 40,
         imageUrl:
-          "https://via.placeholder.com/600x400.png?text=Noise+Canceling+Headphones",
+          "https://res.cloudinary.com/dvmm60i3d/image/upload/v1782487403/Gemini_Generated_Image_lo4cy8lo4cy8lo4c_ifkgka.png",
         rating: 4.7,
         numReviews: 32,
       },
@@ -73,7 +73,7 @@ const seedData = async () => {
         category: "Accessories",
         stock: 30,
         imageUrl:
-          "https://via.placeholder.com/600x400.png?text=Laptop+Backpack",
+          "https://res.cloudinary.com/dvmm60i3d/image/upload/v1782487409/Gemini_Generated_Image_s5jduds5jduds5jd_adkvog.png",
         rating: 4.3,
         numReviews: 12,
       },
@@ -85,7 +85,7 @@ const seedData = async () => {
         category: "Electronics",
         stock: 18,
         imageUrl:
-          "https://via.placeholder.com/600x400.png?text=Smart+Fitness+Watch",
+          "https://res.cloudinary.com/dvmm60i3d/image/upload/v1782487396/Gemini_Generated_Image_6a2bkw6a2bkw6a2b_cjgoac.png",
         rating: 4.6,
         numReviews: 24,
       },
@@ -96,7 +96,8 @@ const seedData = async () => {
         price: 699,
         category: "Clothing",
         stock: 60,
-        imageUrl: "https://via.placeholder.com/600x400.png?text=Cotton+T-Shirt",
+        imageUrl:
+          "https://res.cloudinary.com/dvmm60i3d/image/upload/v1782487556/Gemini_Generated_Image_sfxasqsfxasqsfxa_zgrysw.png",
         rating: 4.2,
         numReviews: 15,
       },
@@ -107,7 +108,8 @@ const seedData = async () => {
         price: 899,
         category: "Home & Kitchen",
         stock: 45,
-        imageUrl: "https://via.placeholder.com/600x400.png?text=Water+Bottle",
+        imageUrl:
+          "https://res.cloudinary.com/dvmm60i3d/image/upload/v1782487554/Gemini_Generated_Image_4qjs7s4qjs7s4qjs_ctjzso.png",
         rating: 4.4,
         numReviews: 21,
       },
@@ -119,7 +121,7 @@ const seedData = async () => {
         category: "Electronics",
         stock: 35,
         imageUrl:
-          "https://via.placeholder.com/600x400.png?text=Bluetooth+Speaker",
+          "https://res.cloudinary.com/dvmm60i3d/image/upload/v1782487553/Gemini_Generated_Image_mrbm59mrbm59mrbm_jgog9t.png",
         rating: 4.5,
         numReviews: 29,
       },
@@ -130,7 +132,8 @@ const seedData = async () => {
         price: 1199,
         category: "Home Decor",
         stock: 28,
-        imageUrl: "https://via.placeholder.com/600x400.png?text=Desk+Lamp",
+        imageUrl:
+          "https://res.cloudinary.com/dvmm60i3d/image/upload/v1782487708/Gemini_Generated_Image_l6iiebl6iiebl6ii_mmajcm.png",
         rating: 4.3,
         numReviews: 16,
       },
@@ -141,7 +144,8 @@ const seedData = async () => {
         price: 3299,
         category: "Accessories",
         stock: 22,
-        imageUrl: "https://via.placeholder.com/600x400.png?text=Analog+Watch",
+        imageUrl:
+          "https://res.cloudinary.com/dvmm60i3d/image/upload/v1782487695/Gemini_Generated_Image_asud69asud69asud_xfyxt5.png",
         rating: 4.6,
         numReviews: 14,
       },
@@ -152,7 +156,8 @@ const seedData = async () => {
         price: 1499,
         category: "Clothing",
         stock: 50,
-        imageUrl: "https://via.placeholder.com/600x400.png?text=Hoodie",
+        imageUrl:
+          "https://res.cloudinary.com/dvmm60i3d/image/upload/v1782487700/Gemini_Generated_Image_2jqsg02jqsg02jqs_aksjs4.png",
         rating: 4.4,
         numReviews: 19,
       },
