@@ -10,9 +10,11 @@
     "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "build": "cd frontend && npm install && npm run build",
     "start": "cd backend && npm start",
-    "dev": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm --prefix backend run dev",
+    "dev:client": "npm --prefix frontend start",
     "start:backend": "npm --prefix backend run dev",
-    "start:frontend": "npm --prefix frontend run dev",
+    "start:frontend": "npm --prefix frontend start",
     "seed": "npm --prefix backend run seed"
   },
   "dependencies": {

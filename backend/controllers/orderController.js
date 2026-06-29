@@ -23,10 +23,10 @@ const addOrderItems = async (req, res) => {
         <p>Your order has been successfully placed! Order ID: <strong>${createdOrder._id}</strong></p>
         <p>Total Amount Paid: $${totalAmount.toFixed(2)}</p>
         <p>It will be shipped to: ${address.street}, ${address.city}</p>
-        <p>Thank you for shopping with ShopNest!</p>
+        <p>Thank you for shopping with ShopNow!</p>
       `;
 
-      await sendEmail(req.user.email, "ShopNest - Order Confirmation", message);
+      await sendEmail(req.user.email, "ShopNow - Order Confirmation", message);
 
       res.status(201).json(createdOrder);
     }

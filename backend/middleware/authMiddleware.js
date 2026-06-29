@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const User = require("../model/User");
-const { model } = require("mongoose");
 
 const protect = async (req, res, next) => {
   let token;

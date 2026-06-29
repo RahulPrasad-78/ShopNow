@@ -22,7 +22,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="home-container">
+    <div className="main-content home-container">
       <div className="hero-banner">
         <h1>Welcome to ShopNow</h1>
         <p>We Have the Best Products at the Best Prices</p>
