@@ -1,6 +1,6 @@
 # ShopNow — Full Stack E-Commerce Web Application
 
-ShopNow is a full-stack e-commerce web application built with the MERN stack. It supports product browsing, cart management, Razorpay payment integration, order tracking, and a complete admin panel for managing products, orders, and users.
+ShopNow is a full-stack e-commerce web application built with the MERN stack. It supports product browsing, cart management, Razorpay payment integration, order tracking, and a complete admin panel for managing products, orders, and users. You can try DEmo : https://shopnow-mmrd.onrender.com/
 
 ---
 
