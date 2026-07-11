@@ -12,13 +12,24 @@ const EditProduct = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!user || user.role !== 'admin') {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (!user || user.role !== 'admin') return;
     const fetchProduct = async () => {
       const res = await fetch(`/api/products/${id}`);
       const data = await res.json();
       setFormData({ name: data.name, description: data.description, price: data.price, category: data.category, stock: data.stock });
     };
     fetchProduct();
-  }, [id]);
+  }, [id, user]);
+
+  if (!user || user.role !== 'admin') {
+    return null;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();

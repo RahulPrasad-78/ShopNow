@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,8 +12,13 @@ const AddProduct = () => {
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (!user || user.role !== 'admin') {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
   if (!user || user.role !== 'admin') {
-    navigate('/');
     return null;
   }
 

@@ -34,6 +34,10 @@ const AdminDashboard = () => {
     fetchStats();
   }, [user, navigate]);
 
+  if (!user || user.role !== 'admin') {
+    return null;
+  }
+
   const cardStyle = {
     padding: '25px',
     background: '#18181b',

@@ -28,7 +28,7 @@ const Shop = () => {
   );
 
   return (
-    <div className="shop-container">
+    <div className="main-content shop-container">
       <h2>All Products</h2>
       <input
         type="text"

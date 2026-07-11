@@ -1,11 +1,17 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const AdminUsers = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
+    if (!user || user.role !== "admin") {
+      navigate("/");
+      return;
+    }
     const fetchUsers = async () => {
       const res = await fetch("/api/auth/user", {
         headers: { Authorization: `Bearer ${user.token}` },
@@ -14,7 +20,11 @@ const AdminUsers = () => {
       setUsers(Array.isArray(data) ? data : []);
     };
     fetchUsers();
-  }, [user]);
+  }, [user, navigate]);
+
+  if (!user || user.role !== "admin") {
+    return null;
+  }
 
   return (
     <div style={containerStyle}>

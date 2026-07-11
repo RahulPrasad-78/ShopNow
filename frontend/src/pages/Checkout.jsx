@@ -45,7 +45,7 @@ const Checkout = () => {
       }
 
       const options = {
-        key: "rzp_test_dummykey123", // Student dummy fallback
+        key: orderData.key_id || "rzp_test_dummykey123",
         amount: orderData.amount,
         currency: orderData.currency,
         name: "ShopNest",
@@ -130,7 +130,7 @@ const Checkout = () => {
   };
 
   return (
-    <div className="checkout-container">
+    <div className="main-content checkout-container">
       <h2>Checkout</h2>
       <div className="checkout-content">
         <form onSubmit={handleSubmit} className="shipping-form">
