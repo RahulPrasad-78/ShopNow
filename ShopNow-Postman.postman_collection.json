@@ -1,0 +1,632 @@
+{
+  "info": {
+    "_postman_id": "38d64d86-3c10-4aff-b925-4351051b941c",
+    "name": "ShopNow-Postman",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48223396",
+    "_collection_link": "https://go.postman.co/collection/48223396-38d64d86-3c10-4aff-b925-4351051b941c?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Product",
+      "item": [
+        {
+          "name": "GetAllProducts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{endpoint}}/api/products/",
+              "host": [
+                "{{endpoint}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ADMIN -- CreateProduct",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer YOUR_JWT_TOKEN"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "type": "text",
+                  "key": "name",
+                  "value": "Red Sneakers"
+                },
+                {
+                  "type": "text",
+                  "key": "description",
+                  "value": "Comfortable running shoes"
+                },
+                {
+                  "type": "text",
+                  "key": "price",
+                  "value": "79.99"
+                },
+                {
+                  "type": "text",
+                  "key": "category",
+                  "value": "Shoes"
+                },
+                {
+                  "type": "text",
+                  "key": "stock",
+                  "value": "25"
+                },
+                {
+                  "type": "file",
+                  "key": "image",
+                  "src": "C:/path/to/image.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/products",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "products"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:5000/api/products' --header 'Authorization: Bearer YOUR_JWT_TOKEN' --form 'name=Red Sneakers' --form 'description=Comfortable running shoes' --form 'price=79.99' --form 'category=Shoes' --form 'stock=25' --form 'image=@C:/path/to/image.jpg'"
+          },
+          "response": []
+        },
+        {
+          "name": "GetByID",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer YOUR_JWT_TOKEN"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "type": "text",
+                  "key": "name",
+                  "value": "Red Sneakers"
+                },
+                {
+                  "type": "text",
+                  "key": "description",
+                  "value": "Comfortable running shoes"
+                },
+                {
+                  "type": "text",
+                  "key": "price",
+                  "value": "79.99"
+                },
+                {
+                  "type": "text",
+                  "key": "category",
+                  "value": "Shoes"
+                },
+                {
+                  "type": "text",
+                  "key": "stock",
+                  "value": "25"
+                },
+                {
+                  "type": "file",
+                  "key": "image",
+                  "src": "C:/path/to/image.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/products/6a3d436fe8051363287e8f7d",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "products",
+                "6a3d436fe8051363287e8f7d"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:5000/api/products' --header 'Authorization: Bearer YOUR_JWT_TOKEN' --form 'name=Red Sneakers' --form 'description=Comfortable running shoes' --form 'price=79.99' --form 'category=Shoes' --form 'stock=25' --form 'image=@C:/path/to/image.jpg'"
+          },
+          "response": []
+        },
+        {
+          "name": "ADMIN -- Put/update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer YOUR_JWT_TOKEN"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "type": "text",
+                  "value": "Updated Product Name"
+                },
+                {
+                  "key": "description",
+                  "type": "text",
+                  "value": "Updated description"
+                },
+                {
+                  "key": "price",
+                  "type": "text",
+                  "value": "99.99"
+                },
+                {
+                  "key": "stock",
+                  "type": "text",
+                  "value": "15"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/products/6a3d436fe8051363287e8f7d",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "products",
+                "6a3d436fe8051363287e8f7d"
+              ]
+            },
+            "description": "Generated from cURL: curl --location --request PUT 'http://localhost:5000/api/products/PRODUCT_ID' \\\r\n--header 'Authorization: Bearer YOUR_JWT_TOKEN' \\\r\n--form 'name=Updated Product Name' \\\r\n--form 'description=Updated description' \\\r\n--form 'price=99.99' \\\r\n--form 'category=Updated Category' \\\r\n--form 'stock=15' \\\r\n--form 'image=@C:/path/to/new-image.jpg'"
+          },
+          "response": []
+        },
+        {
+          "name": "ADMIN -- Put/update Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer YOUR_JWT_TOKEN"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/products/6a3d436fe8051363287e8f7d",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "products",
+                "6a3d436fe8051363287e8f7d"
+              ]
+            },
+            "description": "Generated from cURL: curl --location --request PUT 'http://localhost:5000/api/products/PRODUCT_ID' \\\r\n--header 'Authorization: Bearer YOUR_JWT_TOKEN' \\\r\n--form 'name=Updated Product Name' \\\r\n--form 'description=Updated description' \\\r\n--form 'price=99.99' \\\r\n--form 'category=Updated Category' \\\r\n--form 'stock=15' \\\r\n--form 'image=@C:/path/to/new-image.jpg'"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "endpoint",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{endpoint}}/",
+              "host": [
+                "{{endpoint}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"rahul@gmail.com\",\r\n    \"password\": \"Rahul@4653\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{endpoint}}/api/auth/login",
+              "host": [
+                "{{endpoint}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Rahul\",\r\n    \"email\": \"rahul@gmail.com\",\r\n    \"password\": \"Rahul@4653\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{endpoint}}/api/auth/register",
+              "host": [
+                "{{endpoint}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ADMIN - get all",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"rahul@gmail.com\",\r\n    \"password\": \"Rahul@4653\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{endpoint}}/api/auth/register",
+              "host": [
+                "{{endpoint}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "item": [
+        {
+          "name": "ADMIN -- GetOrder",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer YOUR_JWT_TOKEN"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"items\": [\r\n    {\r\n      \"productId\": \"6a3d436fe8051363287e8f7d\",\r\n      \"name\": \"Sample Product\",\r\n      \"price\": 99.99,\r\n      \"quantity\": 2\r\n    }\r\n  ],\r\n  \"totalAmount\": 199.98,\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"Delhi\",\r\n    \"state\": \"Delhi\",\r\n    \"zip\": \"110001\"\r\n  },\r\n  \"paymentId\": \"pay_123456789\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/orders/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "orders",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MyOrder",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer YOUR_JWT_TOKEN"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"items\": [\r\n    {\r\n      \"productId\": \"6a3d436fe8051363287e8f7d\",\r\n      \"name\": \"Sample Product\",\r\n      \"price\": 99.99,\r\n      \"quantity\": 2\r\n    }\r\n  ],\r\n  \"totalAmount\": 199.98,\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"Delhi\",\r\n    \"state\": \"Delhi\",\r\n    \"zip\": \"110001\"\r\n  },\r\n  \"paymentId\": \"pay_123456789\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/orders/myorders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "orders",
+                "myorders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ADMIN -- OrderStatus",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer YOUR_JWT_TOKEN"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"items\": [\r\n    {\r\n      \"productId\": \"6a3d436fe8051363287e8f7d\",\r\n      \"name\": \"Sample Product\",\r\n      \"price\": 99.99,\r\n      \"quantity\": 2\r\n    }\r\n  ],\r\n  \"totalAmount\": 199.98,\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"Delhi\",\r\n    \"state\": \"Delhi\",\r\n    \"zip\": \"110001\"\r\n  },\r\n  \"paymentId\": \"pay_123456789\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/orders/myorders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "orders",
+                "myorders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer YOUR_JWT_TOKEN"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"items\": [\r\n    {\r\n      \"productId\": \"6a3d436fe8051363287e8f7d\",\r\n      \"name\": \"Sample Product\",\r\n      \"price\": 99.99,\r\n      \"quantity\": 2\r\n    }\r\n  ],\r\n  \"totalAmount\": 199.98,\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"Delhi\",\r\n    \"state\": \"Delhi\",\r\n    \"zip\": \"110001\"\r\n  },\r\n  \"paymentId\": \"pay_123456789\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "description": "Generated from cURL: curl --location 'http://localhost:5000/api/orders' \\\r\n--header 'Authorization: Bearer YOUR_JWT_TOKEN' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n  \"items\": [\r\n    {\r\n      \"productId\": \"6a3d436fe8051363287e8f7d\",\r\n      \"name\": \"Sample Product\",\r\n      \"price\": 99.99,\r\n      \"quantity\": 2\r\n    }\r\n  ],\r\n  \"totalAmount\": 199.98,\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"Delhi\",\r\n    \"state\": \"Delhi\",\r\n    \"zip\": \"110001\"\r\n  },\r\n  \"paymentId\": \"pay_123456789\"\r\n}'"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ADMIN -- GetOrder Copy",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer YOUR_JWT_TOKEN"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"items\": [\r\n    {\r\n      \"productId\": \"6a3d436fe8051363287e8f7d\",\r\n      \"name\": \"Sample Product\",\r\n      \"price\": 99.99,\r\n      \"quantity\": 2\r\n    }\r\n  ],\r\n  \"totalAmount\": 199.98,\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"Delhi\",\r\n    \"state\": \"Delhi\",\r\n    \"zip\": \"110001\"\r\n  },\r\n  \"paymentId\": \"pay_123456789\"\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/orders/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "orders",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "endpoint",
+      "value": ""
+    }
+  ]
+}
