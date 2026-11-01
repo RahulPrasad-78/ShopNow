@@ -37,7 +37,7 @@ const errorHandler = (err, req, res, next) => {
     statusCode = 400;
     message =
       err.code === "LIMIT_FILE_SIZE"
-        ? "Image must be 5MB or smaller"
+        ? "Image must be 4MB or smaller"
         : err.code === "LIMIT_FILE_COUNT" || err.code === "LIMIT_UNEXPECTED_FILE"
           ? "Only one image may be uploaded"
           : `Upload rejected: ${err.message}`;

@@ -76,7 +76,7 @@ const registerUser = async (req, res, next) => {
     existingUser.otpSentAt = new Date();
     await existingUser.save();
 
-    sendEmailSafe(existingUser.email, "Welcome to ShopNow", welcomeEmail(name, otp));
+    await sendEmailSafe(existingUser.email, "Welcome to ShopNow", welcomeEmail(name, otp));
     return res.status(200).json({ email: existingUser.email, requiresVerification: true });
   }
 
@@ -108,7 +108,7 @@ const registerUser = async (req, res, next) => {
 
   // Fire-and-forget: an SMTP outage must not 500 a request whose account has
   // already been created; the user can ask for a new code from the OTP page.
-  sendEmailSafe(user.email, "Welcome to ShopNow", welcomeEmail(name, otp));
+  await sendEmailSafe(user.email, "Welcome to ShopNow", welcomeEmail(name, otp));
 
   // No token until the email is verified.
   res.status(201).json({ email: user.email, requiresVerification: true });
@@ -215,7 +215,7 @@ const resendOtp = async (req, res) => {
   user.otpSentAt = new Date();
   await user.save({ validateBeforeSave: false });
 
-  sendEmailSafe(user.email, "Your ShopNow verification code", welcomeEmail(user.name, otp));
+  await sendEmailSafe(user.email, "Your ShopNow verification code", welcomeEmail(user.name, otp));
   res.json(generic);
 };
 

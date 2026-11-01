@@ -158,7 +158,9 @@ const verifyPayment = async (req, res, next) => {
     throw error;
   }
 
-  sendEmailSafe(
+  // Awaited: a serverless function may be frozen as soon as the response is
+  // sent. sendEmailSafe never rejects, so a mail failure still can't fail this.
+  await sendEmailSafe(
     req.user.email,
     "ShopNow - Order Confirmation",
     orderConfirmationEmail(order, req.user.name),

@@ -180,6 +180,8 @@
 │   ├── <span class="d">model/</span>                  <span class="c"># data shapes: User, Product, Order</span>
 │   ├── <span class="d">utils/</span>                  <span class="c"># sendEmail, emailTemplates, pricing (cart maths), AppError</span>
 │   └── <span class="d">uploads/</span>                <span class="c"># temporary image landing spot (emptied after upload)</span>
+├── <span class="d">api/</span>                        <span class="c"># Vercel entry: exports the Express app as a serverless function</span>
+├── vercel.json                 <span class="c"># Vercel build + routing settings</span>
 ├── <span class="d">frontend/</span>                   <span class="c"># the website</span>
 │   ├── public/                 <span class="c"># index.html, logo</span>
 │   └── <span class="d">src/</span>
@@ -415,7 +417,7 @@
     <tr><td>Rate limiting</td><td>Spam and password guessing (300 req / 15 min; auth 20 / 15 min)</td><td><code>index.js</code></td></tr>
     <tr><td>Helmet + CORS allow-list</td><td>Common browser attacks; unknown sites calling the API</td><td><code>index.js</code></td></tr>
     <tr><td>Same message for wrong email/password + timing equaliser</td><td>Learning which emails have accounts</td><td><code>loginUser</code></td></tr>
-    <tr><td>Upload limits (5 MB, images only)</td><td>Huge or malicious files</td><td><code>productRoutes.js</code></td></tr>
+    <tr><td>Upload limits (4 MB, images only)</td><td>Huge or malicious files</td><td><code>productRoutes.js</code></td></tr>
   </table></div>
 </section>
 
@@ -504,7 +506,7 @@
     <tr><td>No OTP email</td><td>Email vars missing or not an App Password; Spam folder</td><td>Fix <code>EMAIL_USER/EMAIL_PASS</code>, or use Register as Test User</td></tr>
     <tr><td>“Please verify your email first”</td><td>Account not verified</td><td>Enter the code on /verify-email, or press Resend</td></tr>
     <tr><td>“Payments are not configured”</td><td>Razorpay keys missing</td><td>Add them to <code>.env</code> and restart backend</td></tr>
-    <tr><td>Image upload fails</td><td>Cloudinary keys wrong; file &gt; 5 MB or not an image</td><td>Check keys and file</td></tr>
+    <tr><td>Image upload fails</td><td>Cloudinary keys wrong; file &gt; 4 MB or not an image</td><td>Check keys and file</td></tr>
     <tr><td>“Too many requests”</td><td>Rate limiter tripped</td><td>Wait 15 minutes</td></tr>
     <tr><td>Changes to <code>.env</code> not applied</td><td>Server reads it only at startup</td><td>Restart the backend</td></tr>
   </table></div>

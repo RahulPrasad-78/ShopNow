@@ -241,12 +241,19 @@ Run from the repository root.
 
 ---
 
-## ☁️ Deployment
+## ☁️ Deployment (Vercel — frontend and backend together)
 
-1. Set the environment variables on your host (Render, Railway, etc.) and set `NODE_ENV=production`.
-2. Build command: `npm run build`. Start command: `npm start`.
-3. In production Express serves `frontend/build` itself, so one service hosts both the API and the site.
-4. Set `FRONTEND_URL` to your public site URL.
+One Vercel project hosts both: the React build is served as static files and the Express app runs as a serverless function (`api/index.js`, configured in `vercel.json`).
+
+1. Push the repo to GitHub.
+2. On [vercel.com](https://vercel.com) choose **Add New → Project** and import it. Keep the **Root Directory as the repo root** and set Framework Preset to **Other** (build settings come from `vercel.json`).
+3. Add these under **Settings → Environment Variables**: `MONGO_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `EMAIL_USER`, `EMAIL_PASS`, `CLOUDINARY_*`, `RAZORPAY_*`, `NODE_ENV=production`, and `FRONTEND_URL` (your Vercel URL).
+4. In MongoDB Atlas open **Network Access** and allow `0.0.0.0/0` (Vercel has no fixed IP addresses).
+5. Deploy, then open `https://<your-app>.vercel.app/health`. It should return `{"status":"ok"}`.
+
+**Local development is unchanged.** `npm run dev` still runs React on :3000 and the API on :5000 (React proxies `/api` to it). On Vercel the site and API share one address, so no API URLs need to change between environments.
+
+**Serverless limits:** the first request after idle can take a few seconds (cold start), image uploads are capped at 4 MB, and rate limiting is per function instance.
 
 ---
 

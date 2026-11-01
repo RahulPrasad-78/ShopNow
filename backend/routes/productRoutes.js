@@ -9,6 +9,7 @@ const {
   deleteProduct,
 } = require("../controllers/productController");
 const multer = require("multer");
+const os = require("os");
 const { AppError } = require("../utils/AppError");
 const { validate } = require("../middleware/validate");
 const {
@@ -21,9 +22,11 @@ const { param } = require("express-validator");
 // The controller deletes the temp file after uploading it to Cloudinary, but
 // multer writes to disk before the controller runs at all - so the cap and the
 // type check belong here, not there.
+// The OS temp dir is writable everywhere (including Vercel, where the project
+// folder is read-only). The 4MB cap stays under Vercel's ~4.5MB request limit.
 const upload = multer({
-  dest: "uploads/",
-  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+  dest: os.tmpdir(),
+  limits: { fileSize: 4 * 1024 * 1024, files: 1 },
   fileFilter: (req, file, cb) => {
     if (/^image\/(jpeg|png|webp|gif|avif)$/.test(file.mimetype)) {
       return cb(null, true);

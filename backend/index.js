@@ -13,8 +13,9 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 dotenv.config();
 validateEnv();
 
-// 2. Connect to Database
-connectDB();
+// 2. Database. A normal server connects once at boot (below); on Vercel each
+// request awaits the cached connection instead (see the middleware further down).
+if (!process.env.VERCEL) connectDB();
 
 const app = express();
 
@@ -70,6 +71,18 @@ const authLimiter = rateLimit({
 });
 
 // 7. API Routes
+// Serverless: make sure the DB is connected before any route runs.
+if (process.env.VERCEL) {
+  app.use(async (req, res, next) => {
+    try {
+      await connectDB();
+      next();
+    } catch (error) {
+      next(error);
+    }
+  });
+}
+
 app.use("/api", generalApiLimiter);
 app.use("/api/auth", authLimiter, require("./routes/authRoutes"));
 app.use("/api/products", require("./routes/productRoutes"));
@@ -86,7 +99,7 @@ app.get("/health", (req, res) => {
 app.use("/api", notFound);
 
 // 9. Serve frontend in production
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production" && !process.env.VERCEL) {
   app.use(express.static(path.join(__dirname, "../frontend/build")));
 
   app.use((req, res, next) => {
@@ -104,7 +117,13 @@ if (process.env.NODE_ENV === "production") {
 // 10. Central Error Handler (must be registered last)
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Local / traditional hosting: start the server. On Vercel the exported app is
+// wrapped by api/index.js and Vercel handles listening.
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
