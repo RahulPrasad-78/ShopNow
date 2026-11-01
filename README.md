@@ -1,271 +1,270 @@
-# ShopNow — Full Stack E-Commerce Web Application
+# 🛍️ ShopNow — Full-Stack E-Commerce Platform
 
-## ShopNow is a full-stack e-commerce web application built with the MERN stack. It supports product browsing, cart management, Razorpay payment integration, order tracking, and a complete admin panel for managing products, orders, and users. You can try DEmo : https://shopnow-mmrd.onrender.com/
+A complete online store built with the **MERN stack** (MongoDB, Express, React, Node.js). Customers can browse products, verify their email with a one-time code, fill a cart, and pay securely with Razorpay. Admins get a dashboard to manage products, orders and users.
 
-## Tech Stack
+**🔗 Live demo:** https://shopnow-mmrd.onrender.com/
 
-**Frontend**
-
-- React 19, React Router v7
-- Redux Toolkit (cart state management)
-- Context API (authentication state)
-- CSS (custom styles)
-
-**Backend**
-
-- Node.js, Express 5
-- MongoDB Atlas, Mongoose
-- JWT (authentication & authorization)
-- Bcryptjs (password hashing)
-- Multer + Cloudinary (image uploads)
-- Razorpay (payment gateway)
-- Nodemailer (transactional emails)
+> 📖 **New to the project?** Open [`ProjectGuide.html`](./ProjectGuide.html) in your browser. It explains how everything works with flow diagrams, written for beginners.
 
 ---
 
-## Features
+## ✨ Features
 
-- 🛍️ Product listing with search
-- 🛒 Cart with persistent state (localStorage)
-- 🔐 JWT-based authentication with role-based access (user / admin)
-- 💳 Razorpay payment integration with HMAC-SHA256 signature verification
-- 📦 Order placement with automated confirmation emails via Nodemailer
-- ☁️ Image upload to Cloudinary
-- 🛠️ Admin panel — manage products, orders, users, and view analytics dashboard
+**Shopping**
+- Product catalogue with search, categories and pagination
+- Product detail pages with stock information
+- Cart that survives page refreshes (saved in `localStorage`)
+- Secure checkout with **Razorpay** and an order-confirmation email
+
+**Accounts**
+- Register with **email OTP verification** (6-digit code, 10-minute expiry, resend with 60 s cooldown)
+- **Test user** sign-up that skips the OTP, handy for demos
+- Login with JWT; unverified accounts are blocked until they verify
+- Show/hide password button, and role-based access (`user` / `admin`)
+
+**Admin panel** (`/admin`)
+- Dashboard: total orders, products, users and revenue
+- Add / edit / delete products, with image upload to **Cloudinary**
+- View every order and update its status (Pending → Shipped → Delivered / Cancelled)
+- View all registered users
+
+**Security and reliability**
+- Passwords hashed with bcrypt; OTPs stored only as hashes
+- Prices are **always recomputed on the server**, so a tampered cart can't change what is charged
+- Razorpay payment signatures verified with HMAC-SHA256 (constant-time comparison)
+- Atomic stock updates (no overselling) and idempotent payment confirmation
+- Helmet headers, CORS allow-list, request validation, NoSQL-injection scrubbing, rate limiting
+- Friendly in-app toasts and confirm dialogs instead of browser `alert()` boxes
 
 ---
 
-## Project Structure
+## 🧰 Tech Stack
+
+| Layer | Technology |
+| --- | --- |
+| Frontend | React 19, React Router 7, Redux Toolkit (cart), Context API (auth + notifications), plain CSS |
+| Backend | Node.js, Express 5, Mongoose 9 |
+| Database | MongoDB Atlas |
+| Auth | JWT, bcryptjs |
+| Payments | Razorpay |
+| Images | Multer (temp upload) → Cloudinary |
+| Email | Nodemailer (Gmail SMTP) |
+| Validation / security | express-validator, helmet, express-rate-limit, cors |
+
+---
+
+## 🗂️ Project Structure
 
 ```
 ShopNow/
+├── ProjectGuide.html        # Beginner-friendly visual guide (open in a browser)
+├── package.json             # Root scripts (dev, build, seed, install-all)
 ├── backend/
-│   ├── config/          # DB and Cloudinary config
-│   ├── controllers/     # Route logic (auth, product, order, payment, analytics)
-│   ├── middleware/      # JWT protect, admin role check
-│   ├── model/           # Mongoose schemas (User, Product, Order)
-│   ├── routes/          # Express route definitions
-│   ├── utils/           # Email utility (Nodemailer)
-│   ├── seed.js          # Database seeder
-│   └── index.js         # App entry point
+│   ├── index.js             # App entry: middleware, routes, error handler
+│   ├── seed.js              # Sample users + products
+│   ├── config/              # db.js, cloudinary.js, validateEnv.js
+│   ├── controllers/         # auth, product, order, payment, analytics logic
+│   ├── middleware/          # authMiddleware (JWT), adminMiddleware, validators,
+│   │                        # sanitize, errorMiddleware
+│   ├── model/               # User, Product, Order (Mongoose schemas)
+│   ├── routes/              # URL → controller mapping
+│   ├── utils/               # sendEmail, emailTemplates, pricing, AppError
+│   └── uploads/             # Temporary image files (emptied after each upload)
 └── frontend/
+    ├── public/
     └── src/
-        ├── admin/       # Admin panel pages
-        ├── components/  # Navbar, Footer, ProductCard
-        ├── context/     # AuthContext
-        ├── pages/       # User-facing pages
-        ├── redux/       # Cart slice and store
-        └── styles/      # CSS files
+        ├── App.jsx          # All routes
+        ├── admin/           # Dashboard, products, orders, users, add/edit product
+        ├── components/      # Navbar, Footer, ProductCard, route guards, PasswordInput
+        ├── context/         # AuthContext, NotificationContext (toasts + confirm)
+        ├── pages/           # Home, Shop, Cart, Checkout, Login, Register, VerifyEmail…
+        ├── redux/           # cartSlice + store
+        └── styles/          # CSS files
 ```
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
+- [Node.js](https://nodejs.org/) 18 or newer
+- A [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) database
+- A [Cloudinary](https://cloudinary.com/) account (product images)
+- A [Razorpay](https://razorpay.com/) account (test keys are fine)
+- A Gmail account with an **App Password** (for OTP and order emails)
 
-Make sure you have the following installed:
-
-- [Node.js](https://nodejs.org/) (v18 or above)
-- [npm](https://www.npmjs.com/)
-- A [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) account
-- A [Cloudinary](https://cloudinary.com/) account
-- A [Razorpay](https://razorpay.com/) account (test keys work fine)
-
----
-
-### 1. Clone the repository
-
+### 1. Clone and install
 ```bash
 git clone https://github.com/RahulPrasad-78/ShopNow.git
 cd ShopNow
-```
-
----
-
-### 2. Set up environment variables
-
-Create a `.env` file inside the `backend/` folder:
-
-```bash
-cd backend
-cp .env.example .env
-```
-
-Fill in the values:
-
-```env
-PORT=5000
-MONGO_URI=your_mongodb_atlas_connection_string
-JWT_SECRET=your_jwt_secret_key
-
-EMAIL_USER=your_gmail_address
-EMAIL_PASS=your_gmail_app_password
-
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-
-RAZORPAY_KEY_ID=your_razorpay_key_id
-RAZORPAY_KEY_SECRET=your_razorpay_key_secret
-
-FRONTEND_URL=http://localhost:3000
-```
-
-> ⚠️ Never commit your `.env` file. Make sure it is listed in `.gitignore`.
-
----
-
-### 3. Install dependencies
-
-From the root folder, install all dependencies for both backend and frontend in one command:
-
-```bash
 npm run install-all
 ```
 
-Or install them separately:
-
+### 2. Configure environment variables
 ```bash
-# Backend
-cd backend && npm install
-
-# Frontend
-cd ../frontend && npm install
+cd backend
+cp .env.example .env     # on Windows: copy .env.example .env
 ```
+Then fill in `backend/.env` (see the [reference table](#-environment-variables) below).
 
----
-
-### 4. Seed the database (optional)
-
-To populate your MongoDB database with sample products and an admin user:
-
+### 3. (Optional) Seed sample data
 ```bash
 npm run seed
 ```
+Creates an admin account, two sample users and a set of products. Check `backend/seed.js` for the credentials, and change them before deploying anywhere public.
 
----
-
-### 5. Run the application
-
-**Run both frontend and backend together (recommended):**
-
+### 4. Run it
 ```bash
 npm run dev
 ```
+| Service | URL |
+| --- | --- |
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:5000 |
+| Health check | http://localhost:5000/health |
 
-**Or run them separately in two terminals:**
+During development the React dev server proxies `/api/*` to the backend, so no extra setup is needed.
 
-```bash
-# Terminal 1 — backend
-npm run dev:server
+---
 
-# Terminal 2 — frontend
-npm run dev:client
+## 🔐 How Sign-Up Works
+
+```
+Register ──► account saved (verified: false) ──► 6-digit code emailed
+                                                        │
+        enter code on /verify-email ◄───────────────────┘
+                     │
+                     ▼
+        verified: true  ──► logged in automatically
 ```
 
-The backend runs on `http://localhost:5000`
-The frontend runs on `http://localhost:3000`
+| Option on the Register page | What happens |
+| --- | --- |
+| **Register** | Sends an OTP. You can't log in until you verify. Registering again with the same unverified email updates the same record and sends a fresh code, so no duplicates. |
+| **Register as Test User** | No email, no OTP. Created as verified and logged in immediately (stored with `isTestUser: true`). |
+
+Trying to log in before verifying redirects you to the verification page and sends a new code.
 
 ---
 
-## Available Scripts
+## 💳 How Checkout Works
 
-All scripts below are run from the **root** folder unless stated otherwise.
-
-| Script                | Location  | Description                                           |
-| --------------------- | --------- | ----------------------------------------------------- |
-| `npm run install-all` | root      | Installs dependencies for root, backend, and frontend |
-| `npm run dev`         | root      | Runs backend and frontend concurrently                |
-| `npm run dev:server`  | root      | Runs only the backend (nodemon)                       |
-| `npm run dev:client`  | root      | Runs only the frontend (React dev server)             |
-| `npm run build`       | root      | Builds the React frontend for production              |
-| `npm run seed`        | root      | Seeds the database with sample data                   |
-| `npm start`           | backend/  | Starts the backend with node (production)             |
-| `npm run dev`         | backend/  | Starts the backend with nodemon (development)         |
-| `npm start`           | frontend/ | Starts the React development server                   |
-| `npm run build`       | frontend/ | Builds the React app for production                   |
-| `npm test`            | frontend/ | Runs frontend tests                                   |
+1. Browser sends only `{ productId, qty }` plus the shipping address to `POST /api/payment/order`.
+2. The server looks up real prices, creates a Razorpay order and a `Created` order in the database.
+3. The Razorpay pop-up opens; the customer pays.
+4. Browser sends the payment IDs and signature to `POST /api/payment/verify`.
+5. The server checks the signature, reduces stock atomically, marks the order `Paid` and emails a confirmation.
 
 ---
 
-## API Endpoints
+## 📡 API Reference
 
-### Auth
+`Auth` column: **Public** = no login, **User** = logged-in verified user, **Admin** = admin role.
 
-| Method | Endpoint             | Access | Description           |
-| ------ | -------------------- | ------ | --------------------- |
-| POST   | `/api/auth/register` | Public | Register a new user   |
-| POST   | `/api/auth/login`    | Public | Login and receive JWT |
-| GET    | `/api/auth/user`     | Admin  | Get all users         |
+### Auth — `/api/auth`
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/register` | Public | Create account (`accountType`: `user` or `test`) |
+| POST | `/verify-email` | Public | Submit email + OTP; returns a JWT on success |
+| POST | `/resend-otp` | Public | Send a new OTP (60 s cooldown) |
+| POST | `/login` | Public | Login; `403 EMAIL_NOT_VERIFIED` if not verified |
+| GET | `/me` | User | Current user profile |
+| GET | `/users` (alias `/user`) | Admin | List all users |
 
-### Products
+### Products — `/api/products`
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/` | Public | List products. Query: `page`, `limit` (max 100, default 12), `category`, `search` |
+| GET | `/:id` | Public | Single product |
+| POST | `/` | Admin | Create product (multipart form, `image` field) |
+| PUT | `/:id` | Admin | Update product |
+| DELETE | `/:id` | Admin | Delete product |
 
-| Method | Endpoint            | Access | Description        |
-| ------ | ------------------- | ------ | ------------------ |
-| GET    | `/api/products`     | Public | Get all products   |
-| GET    | `/api/products/:id` | Public | Get single product |
-| POST   | `/api/products`     | Admin  | Create a product   |
-| PUT    | `/api/products/:id` | Admin  | Update a product   |
-| DELETE | `/api/products/:id` | Admin  | Delete a product   |
+The list response looks like `{ products, page, pages, total }`.
 
-### Orders
+### Orders — `/api/orders`
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/myorders` | User | Your own orders |
+| GET | `/` | Admin | All orders |
+| PUT | `/:id/status` | Admin | Set status: `Pending`, `Shipped`, `Delivered`, `Cancelled` |
 
-| Method | Endpoint                 | Access | Description               |
-| ------ | ------------------------ | ------ | ------------------------- |
-| POST   | `/api/orders`            | User   | Place an order            |
-| GET    | `/api/orders/myorders`   | User   | Get current user's orders |
-| GET    | `/api/orders`            | Admin  | Get all orders            |
-| PUT    | `/api/orders/:id/status` | Admin  | Update order status       |
+Orders are created only through the payment endpoints below.
 
-### Payment
+### Payment — `/api/payment`
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/order` | User | Price the cart server-side and create the Razorpay order |
+| POST | `/verify` | User | Verify the signature, finalise the order |
 
-| Method | Endpoint              | Access | Description              |
-| ------ | --------------------- | ------ | ------------------------ |
-| POST   | `/api/payment/order`  | User   | Create Razorpay order    |
-| POST   | `/api/payment/verify` | User   | Verify payment signature |
-
-### Analytics
-
-| Method | Endpoint         | Access | Description         |
-| ------ | ---------------- | ------ | ------------------- |
-| GET    | `/api/analytics` | Admin  | Get dashboard stats |
-
----
-
-## Environment Variables Reference
-
-| Variable                | Description                                        |
-| ----------------------- | -------------------------------------------------- |
-| `PORT`                  | Port the backend runs on (default: 5000)           |
-| `MONGO_URI`             | MongoDB Atlas connection string                    |
-| `JWT_SECRET`            | Secret key for signing JWT tokens                  |
-| `EMAIL_USER`            | Gmail address used for sending emails              |
-| `EMAIL_PASS`            | Gmail app password (not your account password)     |
-| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name                              |
-| `CLOUDINARY_API_KEY`    | Cloudinary API key                                 |
-| `CLOUDINARY_API_SECRET` | Cloudinary API secret                              |
-| `RAZORPAY_KEY_ID`       | Razorpay key ID (use test keys in development)     |
-| `RAZORPAY_KEY_SECRET`   | Razorpay key secret                                |
-| `FRONTEND_URL`          | Frontend URL for CORS (e.g. http://localhost:3000) |
+### Other
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/api/analytics` | Admin | Totals for orders, products, users, revenue |
+| GET | `/health` | Public | Server status |
 
 ---
 
-## Admin Access
+## ⚙️ Environment Variables
 
-After seeding the database, an admin account is created. You can log in with the seeded admin credentials and access the admin panel at `/admin`.
+All set in `backend/.env` (template: `backend/.env.example`).
 
-> If you create your own admin manually, set `role: "admin"` on the user document in MongoDB Atlas.
+| Variable | Required | Description |
+| --- | --- | --- |
+| `PORT` | No | Backend port (default `5000`) |
+| `MONGO_URI` | Yes | MongoDB connection string |
+| `JWT_SECRET` | Yes | Long random string used to sign tokens |
+| `JWT_EXPIRES_IN` | No | Token lifetime (default `3d`) |
+| `EMAIL_USER` | Recommended | Gmail address that sends emails |
+| `EMAIL_PASS` | Recommended | Gmail **App Password** (not your normal password) |
+| `CLOUDINARY_CLOUD_NAME` / `_API_KEY` / `_API_SECRET` | Recommended | Image hosting |
+| `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` | Recommended | Payments (use test keys in development) |
+| `FRONTEND_URL` | No | Allowed CORS origin in production |
+| `NODE_ENV` | No | `development` or `production` |
+
+> Without `EMAIL_USER` / `EMAIL_PASS`, no emails are sent, so real sign-ups can't receive their OTP. Use **Register as Test User** until email is configured.
 
 ---
 
-## License
+## 📜 Scripts
 
-This project is open source and available under the [ISC License](LICENSE).
+Run from the repository root.
+
+| Command | What it does |
+| --- | --- |
+| `npm run install-all` | Install root, backend and frontend dependencies |
+| `npm run dev` | Run backend (nodemon) and frontend together |
+| `npm run dev:server` / `npm run dev:client` | Run just one side |
+| `npm run build` | Build the React app into `frontend/build` |
+| `npm start` | Start the backend (in production it also serves the built frontend) |
+| `npm run seed` | Fill the database with sample data |
 
 ---
 
-## Author
+## ☁️ Deployment
 
-**Rahul Prasad**
-[GitHub](https://github.com/RahulPrasad-78)
+1. Set the environment variables on your host (Render, Railway, etc.) and set `NODE_ENV=production`.
+2. Build command: `npm run build`. Start command: `npm start`.
+3. In production Express serves `frontend/build` itself, so one service hosts both the API and the site.
+4. Set `FRONTEND_URL` to your public site URL.
+
+---
+
+## 🩺 Troubleshooting
+
+| Problem | Likely cause |
+| --- | --- |
+| Shop/Home show no products | Backend not running, or wrong `MONGO_URI` |
+| OTP email never arrives | `EMAIL_USER`/`EMAIL_PASS` missing or not an App Password; check Spam |
+| "Payments are not configured" | Razorpay keys missing in `.env` |
+| Product image upload fails | Cloudinary keys missing or wrong |
+| Can't log in after registering | Account not verified yet: enter the OTP, or register as a test user |
+| `Too many requests` | Rate limiter: wait 15 minutes |
+
+---
+
+## 👤 Author
+
+**Rahul Prasad** — [GitHub](https://github.com/RahulPrasad-78)
+
+Licensed under the ISC License.

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ShopNow — How the Project Works</title>
+<style>
+  :root {
+    --bg: #09090b; --panel: #18181b; --panel2: #1f1f23; --line: #2e2e33;
+    --text: #e4e4e7; --muted: #a1a1aa; --orange: #f97316; --green: #22c55e;
+    --blue: #3b82f6; --red: #ef4444; --purple: #a78bfa; --yellow: #facc15;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.65 system-ui, "Segoe UI", Roboto, sans-serif; }
+  a { color: var(--orange); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { background: #27272a; padding: 1px 6px; border-radius: 5px; font-size: .9em; color: #fdba74; }
+  .layout { display: flex; max-width: 1280px; margin: 0 auto; }
+  nav { position: sticky; top: 0; align-self: flex-start; height: 100vh; overflow-y: auto; width: 250px; flex: none; padding: 28px 18px; border-right: 1px solid var(--line); }
+  nav h1 { font-size: 20px; margin: 0 0 4px; color: var(--orange); }
+  nav small { color: var(--muted); display: block; margin-bottom: 18px; }
+  nav a { display: block; padding: 6px 10px; border-radius: 8px; color: var(--muted); font-size: 14px; }
+  nav a:hover { background: var(--panel); color: var(--text); text-decoration: none; }
+  main { flex: 1; min-width: 0; padding: 40px 36px 100px; }
+  .hero { background: linear-gradient(135deg, #1c1008, var(--panel)); border: 1px solid #3a2410; border-radius: 18px; padding: 36px; margin-bottom: 40px; }
+  .hero h1 { margin: 0 0 8px; font-size: 38px; }
+  .hero p { color: var(--muted); margin: 0; max-width: 720px; }
+  section { margin-top: 64px; scroll-margin-top: 20px; }
+  h2 { font-size: 28px; margin: 0 0 6px; padding-bottom: 10px; border-bottom: 2px solid var(--orange); display: inline-block; }
+  h3 { font-size: 20px; margin: 34px 0 8px; color: #fff; }
+  p.lead { color: var(--muted); margin: 10px 0 18px; }
+  .tip { background: #0b1b2e; border-left: 4px solid var(--blue); padding: 12px 16px; border-radius: 8px; margin: 16px 0; }
+  .warn { background: #2a1408; border-left: 4px solid var(--orange); padding: 12px 16px; border-radius: 8px; margin: 16px 0; }
+  .tip b, .warn b { color: #fff; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; margin: 16px 0; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .card h4 { margin: 0 0 6px; font-size: 16px; color: var(--orange); }
+  .card p { margin: 0; color: var(--muted); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; background: var(--panel); border-radius: 10px; overflow: hidden; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--panel2); color: var(--orange); font-weight: 600; }
+  tr:last-child td { border-bottom: 0; }
+  .tbl { overflow-x: auto; }
+  .badge { display: inline-block; padding: 1px 9px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+  .b-pub { background: #052e16; color: var(--green); }
+  .b-user { background: #172554; color: #93c5fd; }
+  .b-admin { background: #3b0a0a; color: #fca5a5; }
+  .m-get { color: var(--green); font-weight: 700; } .m-post { color: var(--orange); font-weight: 700; }
+  .m-put { color: var(--blue); font-weight: 700; } .m-del { color: var(--red); font-weight: 700; }
+  /* diagrams */
+  .diagram { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin: 16px 0; overflow-x: auto; }
+  .diagram > .cap { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+  .arch { display: flex; flex-direction: column; align-items: center; gap: 0; min-width: 640px; }
+  .row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .node { border: 2px solid var(--c, var(--orange)); background: color-mix(in srgb, var(--c, var(--orange)) 12%, transparent); border-radius: 12px; padding: 10px 16px; text-align: center; min-width: 150px; }
+  .node b { display: block; color: #fff; } .node span { font-size: 12.5px; color: var(--muted); }
+  .link { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 12.5px; padding: 4px 0; }
+  .link::before { content: ""; width: 2px; height: 14px; background: var(--muted); }
+  .link::after { content: "▼"; font-size: 10px; line-height: 1; margin-top: -2px; }
+  .link.both::before { height: 10px; } .link.both i { font-style: normal; }
+  .flow { display: flex; flex-direction: column; align-items: center; min-width: 320px; }
+  .flow .step { width: min(560px, 100%); text-align: center; padding: 10px 16px; border-radius: 10px; border: 2px solid var(--c, var(--blue)); background: color-mix(in srgb, var(--c, var(--blue)) 12%, transparent); font-size: 14.5px; }
+  .flow .start, .flow .end { border-radius: 99px; --c: var(--green); }
+  .flow .end.bad { --c: var(--red); }
+  .flow .decision { --c: var(--yellow); clip-path: polygon(6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 50%); padding: 14px 40px; border: 0; background: color-mix(in srgb, var(--yellow) 18%, transparent); outline: 0; position: relative; }
+  .flow .decision b { color: var(--yellow); }
+  .flow .arrow { display: flex; flex-direction: column; align-items: center; color: var(--muted); font-size: 12px; }
+  .flow .arrow::before { content: ""; width: 2px; height: 14px; background: var(--muted); }
+  .flow .arrow::after { content: "▼"; font-size: 10px; margin-top: -3px; line-height: 1; }
+  .flow .side { width: min(560px, 100%); font-size: 13px; color: #fca5a5; text-align: center; margin-top: 4px; }
+  .flow .side::before { content: "✗ NO → "; font-weight: 700; }
+  svg text { font-family: system-ui, "Segoe UI", sans-serif; }
+  .tree { font-family: ui-monospace, Consolas, monospace; font-size: 13.5px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 22px; overflow-x: auto; white-space: pre; line-height: 1.7; }
+  .tree .c { color: var(--muted); } .tree .d { color: var(--orange); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .steps { counter-reset: s; list-style: none; padding: 0; }
+  .steps li { counter-increment: s; position: relative; padding: 6px 0 6px 44px; }
+  .steps li::before { content: counter(s); position: absolute; left: 0; top: 4px; width: 28px; height: 28px; border-radius: 50%; background: var(--orange); color: #09090b; font-weight: 700; text-align: center; line-height: 28px; font-size: 14px; }
+  @media (max-width: 900px) { nav { display: none; } main { padding: 24px 16px 80px; } .two { grid-template-columns: 1fr; } .hero h1 { font-size: 28px; } }
+  @media print { nav { display: none; } body { background: #fff; color: #000; } }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav>
+  <h1>ShopNow</h1>
+  <small>Project guide</small>
+  <a href="#overview">1. The big picture</a>
+  <a href="#stack">2. Technologies used</a>
+  <a href="#folders">3. Folder map</a>
+  <a href="#frontend">4. Frontend (React)</a>
+  <a href="#backend">5. Backend (Express)</a>
+  <a href="#database">6. Database models</a>
+  <a href="#flows">7. Step-by-step flows</a>
+  <a href="#security">8. Security features</a>
+  <a href="#api">9. API reference</a>
+  <a href="#run">10. Run it yourself</a>
+  <a href="#glossary">11. Glossary</a>
+  <a href="#trouble">12. Troubleshooting</a>
+</nav>
+
+<main>
+
+<div class="hero">
+  <h1>🛍️ ShopNow — how it all works</h1>
+  <p>ShopNow is an online store. Customers browse products, put them in a cart and pay online. Admins add products and manage orders. This page explains every moving part and how the parts talk to each other, with no prior knowledge assumed.</p>
+</div>
+
+<!-- ============ 1. OVERVIEW ============ -->
+<section id="overview">
+  <h2>1. The big picture</h2>
+  <p class="lead">Think of a restaurant. The <b>frontend</b> is the dining room and menu (what the customer sees). The <b>backend</b> is the kitchen (where the real work and rules live). The <b>database</b> is the pantry (where everything is stored). Outside suppliers (payments, images, email) are delivery partners.</p>
+
+  <div class="diagram">
+    <div class="cap">Who talks to whom</div>
+    <div class="arch">
+      <div class="row"><div class="node" style="--c:var(--blue)"><b>👤 You (browser)</b><span>Chrome, Edge, phone…</span></div></div>
+      <div class="link"><i>shows pages</i></div>
+      <div class="row"><div class="node" style="--c:var(--blue)"><b>Frontend — React</b><span>Pages, buttons, cart, forms<br/>runs inside your browser</span></div></div>
+      <div class="link"><i>sends requests like “GET /api/products” (HTTP + JSON)</i></div>
+      <div class="row"><div class="node" style="--c:var(--orange)"><b>Backend — Express (Node.js)</b><span>Checks who you are, applies the rules,<br/>talks to the database and partners</span></div></div>
+      <div class="link"><i>reads &amp; writes data / calls partners</i></div>
+      <div class="row">
+        <div class="node" style="--c:var(--green)"><b>🍃 MongoDB</b><span>Users, products, orders</span></div>
+        <div class="node" style="--c:var(--purple)"><b>☁️ Cloudinary</b><span>Stores product photos</span></div>
+        <div class="node" style="--c:var(--yellow)"><b>💳 Razorpay</b><span>Takes the payment</span></div>
+        <div class="node" style="--c:var(--red)"><b>✉️ Gmail (SMTP)</b><span>Sends OTP &amp; order emails</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip"><b>Golden rule:</b> the browser is never trusted. Anything important (prices, who is admin, whether a payment is real) is decided by the backend. The frontend just asks and displays.</div>
+
+  <h3>The journey of one request</h3>
+  <p>Every time you click something that needs data, this happens:</p>
+  <ol class="steps">
+    <li>You click (e.g. open the Shop page). React runs <code>fetch("/api/products")</code>.</li>
+    <li>The request travels to the Express server.</li>
+    <li>It passes through safety checks (security headers, rate limit, input cleaning, login check if needed).</li>
+    <li>A <b>route</b> sends it to the correct <b>controller</b> function.</li>
+    <li>The controller asks <b>MongoDB</b> (through a Mongoose <b>model</b>) for data.</li>
+    <li>The server replies with JSON; React stores it in state and draws the page.</li>
+  </ol>
+</section>
+
+<!-- ============ 2. STACK ============ -->
+<section id="stack">
+  <h2>2. Technologies used</h2>
+  <p class="lead">Each tool has one job.</p>
+  <div class="cards">
+    <div class="card"><h4>React 19</h4><p>Builds the user interface out of reusable components (Navbar, ProductCard…).</p></div>
+    <div class="card"><h4>React Router 7</h4><p>Switches pages without reloading (/shop, /cart, /admin…).</p></div>
+    <div class="card"><h4>Redux Toolkit</h4><p>Holds the shopping cart so every page can read it. Saved in localStorage.</p></div>
+    <div class="card"><h4>Context API</h4><p>Shares the logged-in user (AuthContext) and pop-up messages (NotificationContext).</p></div>
+    <div class="card"><h4>Node.js + Express 5</h4><p>The web server. Receives requests and returns answers.</p></div>
+    <div class="card"><h4>MongoDB + Mongoose</h4><p>Database, plus a friendly way to define what data looks like.</p></div>
+    <div class="card"><h4>JWT + bcrypt</h4><p>JWT = a signed “ID badge” for logged-in users. bcrypt scrambles passwords so they can't be read.</p></div>
+    <div class="card"><h4>Multer + Cloudinary</h4><p>Multer receives an uploaded photo; Cloudinary stores it online.</p></div>
+    <div class="card"><h4>Razorpay</h4><p>Payment gateway: handles cards/UPI so we never touch card numbers.</p></div>
+    <div class="card"><h4>Nodemailer</h4><p>Sends emails through Gmail (OTP codes, order confirmations).</p></div>
+    <div class="card"><h4>express-validator</h4><p>Checks incoming data is sane (valid email, price ≥ 0…).</p></div>
+    <div class="card"><h4>helmet · cors · rate-limit</h4><p>Security headers, allowed websites list, and anti-spam request limits.</p></div>
+  </div>
+</section>
+
+<!-- ============ 3. FOLDERS ============ -->
+<section id="folders">
+  <h2>3. Folder map</h2>
+  <p class="lead">Where to find things.</p>
+<div class="tree"><span class="d">ShopNow/</span>
+├── <span class="d">backend/</span>                    <span class="c"># the server</span>
+│   ├── index.js                <span class="c"># starts everything, wires middleware + routes</span>
+│   ├── seed.js                 <span class="c"># fills DB with sample users/products</span>
+│   ├── <span class="d">config/</span>                 <span class="c"># db.js (connect), cloudinary.js, validateEnv.js (checks .env)</span>
+│   ├── <span class="d">routes/</span>                 <span class="c"># URL → controller   (auth, products, orders, payment, analytics)</span>
+│   ├── <span class="d">controllers/</span>            <span class="c"># the actual logic for each URL</span>
+│   ├── <span class="d">middleware/</span>             <span class="c"># gatekeepers: login check, admin check, validation, sanitising, errors</span>
+│   ├── <span class="d">model/</span>                  <span class="c"># data shapes: User, Product, Order</span>
+│   ├── <span class="d">utils/</span>                  <span class="c"># sendEmail, emailTemplates, pricing (cart maths), AppError</span>
+│   └── <span class="d">uploads/</span>                <span class="c"># temporary image landing spot (emptied after upload)</span>
+├── <span class="d">frontend/</span>                   <span class="c"># the website</span>
+│   ├── public/                 <span class="c"># index.html, logo</span>
+│   └── <span class="d">src/</span>
+│       ├── index.js            <span class="c"># mounts React + providers (Redux, Auth, Notifications)</span>
+│       ├── App.jsx             <span class="c"># list of all pages (routes)</span>
+│       ├── <span class="d">pages/</span>              <span class="c"># Home, Shop, ProductDetail, Cart, Checkout, Login, Register, VerifyEmail…</span>
+│       ├── <span class="d">admin/</span>              <span class="c"># AdminDashboard, AdminProducts, AdminOrders, AdminUsers, Add/EditProduct</span>
+│       ├── <span class="d">components/</span>         <span class="c"># Navbar, Footer, ProductCard, ProtectedRoute, AdminRoute, PasswordInput</span>
+│       ├── <span class="d">context/</span>            <span class="c"># AuthContext, NotificationContext</span>
+│       ├── <span class="d">redux/</span>              <span class="c"># cartSlice, store</span>
+│       └── <span class="d">styles/</span>             <span class="c"># CSS</span>
+├── package.json                <span class="c"># root scripts: dev, build, seed, install-all</span>
+├── README.md
+└── ProjectGuide.html           <span class="c"># this file</span>
+</div>
+</section>
+
+<!-- ============ 4. FRONTEND ============ -->
+<section id="frontend">
+  <h2>4. Frontend (React)</h2>
+  <p class="lead">Everything the visitor sees. It never touches the database; it only calls the API.</p>
+
+  <h3>Pages and who may open them</h3>
+  <div class="tbl"><table>
+    <tr><th>Page (URL)</th><th>What it does</th><th>Access</th></tr>
+    <tr><td><code>/</code> Home</td><td>Hero banner and 4 featured products</td><td><span class="badge b-pub">Anyone</span></td></tr>
+    <tr><td><code>/shop</code></td><td>All products with live search box</td><td><span class="badge b-pub">Anyone</span></td></tr>
+    <tr><td><code>/product/:id</code></td><td>One product, “Add to cart” button</td><td><span class="badge b-pub">Anyone</span></td></tr>
+    <tr><td><code>/register</code> · <code>/login</code></td><td>Create account / sign in (with show-password eye)</td><td><span class="badge b-pub">Anyone</span></td></tr>
+    <tr><td><code>/verify-email</code></td><td>Enter the 6-digit code, resend with countdown</td><td><span class="badge b-pub">Anyone</span></td></tr>
+    <tr><td><code>/about</code> · <code>/return</code> · <code>/disclaimer</code></td><td>Info pages</td><td><span class="badge b-pub">Anyone</span></td></tr>
+    <tr><td><code>/cart</code></td><td>Review items, change quantity</td><td><span class="badge b-user">Logged-in</span></td></tr>
+    <tr><td><code>/checkout</code></td><td>Address + pay with Razorpay</td><td><span class="badge b-user">Logged-in</span></td></tr>
+    <tr><td><code>/ordersuccess</code></td><td>“Thank you” page after payment</td><td><span class="badge b-user">Logged-in</span></td></tr>
+    <tr><td><code>/profile</code></td><td>Your past orders</td><td><span class="badge b-user">Logged-in</span></td></tr>
+    <tr><td><code>/admin</code></td><td>Dashboard stats (orders, products, users, revenue)</td><td><span class="badge b-admin">Admin</span></td></tr>
+    <tr><td><code>/admin/products</code> · <code>add-product</code> · <code>edit-product/:id</code></td><td>Manage the catalogue</td><td><span class="badge b-admin">Admin</span></td></tr>
+    <tr><td><code>/admin/orders</code> · <code>/admin/users</code></td><td>See all orders (change status) / all users</td><td><span class="badge b-admin">Admin</span></td></tr>
+  </table></div>
+
+  <h3>Route guards: how a page is protected</h3>
+  <p>Wrapper components (<code>ProtectedRoute</code>, <code>AdminRoute</code>) check the user before showing a page. The real protection is on the backend; this just gives a nicer experience.</p>
+  <div class="diagram"><div id="fc-guard"></div></div>
+
+  <h3>Where the app remembers things (state)</h3>
+  <div class="cards">
+    <div class="card" style="border-color:var(--orange)"><h4>AuthContext</h4><p>Who is logged in (name, role, token). Saved as <code>userInfo</code> in localStorage so a refresh keeps you logged in.</p></div>
+    <div class="card" style="border-color:var(--blue)"><h4>Redux cart</h4><p><code>addToCart</code>, <code>removeFromCart</code>, <code>clearCart</code>. Saved as <code>cartItems</code> in localStorage.</p></div>
+    <div class="card" style="border-color:var(--green)"><h4>NotificationContext</h4><p><code>toast.success/error/warning/info</code> slide-in messages and <code>confirm()</code> pop-up (used for “Delete this product?”).</p></div>
+    <div class="card" style="border-color:var(--purple)"><h4>Component state</h4><p>Short-lived stuff like what you typed in a form or whether a page is loading (<code>useState</code>).</p></div>
+  </div>
+  <div class="tip"><b>How does React reach the API?</b> Code just writes <code>fetch("/api/products")</code>. In development the React dev server forwards <code>/api/*</code> to <code>localhost:5000</code> (the <code>"proxy"</code> setting). In production Express serves the built site itself, so same address.</div>
+</section>
+
+<!-- ============ 5. BACKEND ============ -->
+<section id="backend">
+  <h2>5. Backend (Express)</h2>
+  <p class="lead">The brain. It is a chain of small checks followed by the real work.</p>
+
+  <h3>What every request passes through (in order)</h3>
+  <div class="diagram"><div id="fc-pipeline"></div></div>
+
+  <h3>Routes → Controllers → Models</h3>
+  <div class="diagram">
+    <div class="arch">
+      <div class="row">
+        <div class="node" style="--c:var(--blue)"><b>Route</b><span>“GET /api/products”<br/>chooses the controller &amp; its guards</span></div>
+        <div class="node" style="--c:var(--orange)"><b>Middleware</b><span>protect · admin · validate<br/>(optional gatekeepers)</span></div>
+        <div class="node" style="--c:var(--green)"><b>Controller</b><span>the logic: “find products,<br/>apply filters, reply JSON”</span></div>
+        <div class="node" style="--c:var(--purple)"><b>Model</b><span>Mongoose schema —<br/>talks to MongoDB</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>The helper files</h3>
+  <div class="tbl"><table>
+    <tr><th>File</th><th>Purpose</th></tr>
+    <tr><td><code>middleware/authMiddleware.js</code> (<code>protect</code>)</td><td>Reads the <code>Authorization: Bearer &lt;token&gt;</code> header, verifies the JWT, loads the user, and refuses unverified accounts.</td></tr>
+    <tr><td><code>middleware/adminMiddleware.js</code> (<code>admin</code>)</td><td>Allows only users whose role is <code>admin</code>.</td></tr>
+    <tr><td><code>middleware/validators.js</code> + <code>validate.js</code></td><td>Rules for incoming data (valid email, password ≥ 6 chars, price ≥ 0, OTP is 6 digits…). Bad data gets a 400 reply.</td></tr>
+    <tr><td><code>middleware/sanitize.js</code></td><td>Deletes dangerous keys like <code>$gt</code> from request bodies (stops NoSQL injection).</td></tr>
+    <tr><td><code>middleware/errorMiddleware.js</code></td><td>One place that turns any error into a clean JSON reply; hides internal details.</td></tr>
+    <tr><td><code>utils/pricing.js</code></td><td><code>priceCart</code> recomputes totals from DB prices; <code>applyStock</code> / <code>restoreStock</code> change stock safely.</td></tr>
+    <tr><td><code>utils/sendEmail.js</code> + <code>emailTemplates.js</code></td><td>Sends the OTP/welcome and order-confirmation emails. Failures are logged, never crash the request.</td></tr>
+    <tr><td><code>utils/AppError.js</code></td><td>An error with a status code (404, 403…) and optional code like <code>EMAIL_NOT_VERIFIED</code>.</td></tr>
+    <tr><td><code>config/validateEnv.js</code></td><td>On startup, warns about missing <code>.env</code> values.</td></tr>
+  </table></div>
+</section>
+
+<!-- ============ 6. DATABASE ============ -->
+<section id="database">
+  <h2>6. Database models</h2>
+  <p class="lead">Three collections (think: three spreadsheets) in MongoDB.</p>
+
+  <div class="diagram">
+    <div class="cap">How they relate</div>
+    <svg viewBox="0 0 760 150" width="100%" style="min-width:620px">
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#a1a1aa"/></marker></defs>
+      <rect x="10" y="40" width="190" height="70" rx="12" fill="#3b82f622" stroke="#3b82f6" stroke-width="2"/>
+      <text x="105" y="70" text-anchor="middle" fill="#fff" font-size="17" font-weight="700">User</text>
+      <text x="105" y="92" text-anchor="middle" fill="#a1a1aa" font-size="12">name, email, password…</text>
+      <rect x="285" y="40" width="190" height="70" rx="12" fill="#f9731622" stroke="#f97316" stroke-width="2"/>
+      <text x="380" y="70" text-anchor="middle" fill="#fff" font-size="17" font-weight="700">Order</text>
+      <text x="380" y="92" text-anchor="middle" fill="#a1a1aa" font-size="12">items, total, address, status</text>
+      <rect x="560" y="40" width="190" height="70" rx="12" fill="#22c55e22" stroke="#22c55e" stroke-width="2"/>
+      <text x="655" y="70" text-anchor="middle" fill="#fff" font-size="17" font-weight="700">Product</text>
+      <text x="655" y="92" text-anchor="middle" fill="#a1a1aa" font-size="12">name, price, stock, image</text>
+      <line x1="285" y1="75" x2="203" y2="75" stroke="#a1a1aa" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="244" y="66" text-anchor="middle" fill="#a1a1aa" font-size="11">userId</text>
+      <line x1="475" y1="75" x2="557" y2="75" stroke="#a1a1aa" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="516" y="66" text-anchor="middle" fill="#a1a1aa" font-size="11">items[].productId</text>
+      <text x="380" y="140" text-anchor="middle" fill="#a1a1aa" font-size="12">An order belongs to one user and lists many products (with a price/name snapshot, so history never changes).</text>
+    </svg>
+  </div>
+
+  <div class="two">
+    <div>
+      <h3>User</h3>
+      <div class="tbl"><table>
+        <tr><th>Field</th><th>Meaning</th></tr>
+        <tr><td>name, email (unique), password</td><td>Password is stored as a bcrypt hash</td></tr>
+        <tr><td>role</td><td><code>user</code> or <code>admin</code></td></tr>
+        <tr><td><b>verified</b></td><td><code>false</code> until the OTP is entered (or test user)</td></tr>
+        <tr><td>isTestUser</td><td>Skipped the OTP via “Register as Test User”</td></tr>
+        <tr><td>otpHash, otpExpiresAt, otpAttempts, otpSentAt</td><td>OTP bookkeeping (hidden from normal queries; the code itself is never stored)</td></tr>
+      </table></div>
+    </div>
+    <div>
+      <h3>Product</h3>
+      <div class="tbl"><table>
+        <tr><th>Field</th><th>Meaning</th></tr>
+        <tr><td>name, description, category</td><td>Text info (name &amp; description are searchable)</td></tr>
+        <tr><td>price, stock</td><td>Numbers, never negative</td></tr>
+        <tr><td>imageUrl, cloudinaryPublicId</td><td>Photo link + id to delete it later</td></tr>
+        <tr><td>rating, numReviews</td><td>Reserved for reviews</td></tr>
+      </table></div>
+    </div>
+  </div>
+
+  <h3>Order</h3>
+  <div class="tbl"><table>
+    <tr><th>Field</th><th>Meaning</th></tr>
+    <tr><td>userId</td><td>Who bought</td></tr>
+    <tr><td>items[]</td><td>productId, name, imageUrl, qty, price (snapshots from purchase time)</td></tr>
+    <tr><td>totalAmount, currency</td><td>Computed by the server (INR)</td></tr>
+    <tr><td>address</td><td>fullName, street, city, postalCode, country</td></tr>
+    <tr><td>razorpayOrderId, paymentId</td><td>Links to the gateway. <code>paymentId</code> is unique, so one payment can't create two orders.</td></tr>
+    <tr><td>paymentStatus</td><td><code>Created</code> → <code>Paid</code> (or <code>Failed</code> / <code>Refunded</code>)</td></tr>
+    <tr><td>status</td><td>Delivery: <code>Pending</code> → <code>Shipped</code> → <code>Delivered</code> (or <code>Cancelled</code>)</td></tr>
+    <tr><td>stockApplied</td><td>True once stock has been reduced for this order</td></tr>
+  </table></div>
+</section>
+
+<!-- ============ 7. FLOWS ============ -->
+<section id="flows">
+  <h2>7. Step-by-step flows</h2>
+  <p class="lead">Each journey drawn two ways: a <b>sequence diagram</b> (who sends what to whom, top to bottom) and a <b>flowchart</b> (the decisions along the way).</p>
+
+  <!-- 7.1 Register -->
+  <h3>7.1 Creating an account (with email OTP)</h3>
+  <p>OTP = One-Time Password: a 6-digit code emailed to you to prove the address is really yours.</p>
+  <div class="diagram"><div class="cap">Sequence: register as a normal user</div><div id="sq-register"></div></div>
+  <div class="diagram"><div class="cap">Flowchart: the Register page</div><div id="fc-register"></div></div>
+  <div class="cards">
+    <div class="card" style="border-color:var(--orange)"><h4>Register</h4><p>Account saved with <code>verified: false</code>, code emailed, <b>no login yet</b>. Registering again with the same unverified email just updates that same record and sends a fresh code (no duplicates).</p></div>
+    <div class="card" style="border-color:var(--green)"><h4>Register as Test User</h4><p>No email, no OTP. Saved with <code>verified: true</code> and <code>isTestUser: true</code>, logged in instantly. Great for demos.</p></div>
+    <div class="card" style="border-color:var(--red)"><h4>OTP rules</h4><p>Valid 10 minutes · max 5 wrong tries · resend allowed every 60 seconds · stored only as a hash.</p></div>
+  </div>
+
+  <!-- 7.2 Login -->
+  <h3>7.2 Logging in</h3>
+  <div class="diagram"><div class="cap">Sequence</div><div id="sq-login"></div></div>
+  <div class="diagram"><div class="cap">Flowchart</div><div id="fc-login"></div></div>
+  <div class="tip"><b>What is a JWT?</b> After a successful login the server gives the browser a long, signed text string (the token). The browser attaches it to later requests as <code>Authorization: Bearer …</code>. The server checks the signature to know who you are, without asking for your password again. It expires after 3 days.</div>
+
+  <!-- 7.3 Browse -->
+  <h3>7.3 Browsing products</h3>
+  <div class="diagram"><div class="cap">Sequence: opening the Shop page</div><div id="sq-browse"></div></div>
+  <p>The API returns <code>{ products, page, pages, total }</code>. Shop asks for up to 100 at once; search on the Shop page filters those in the browser.</p>
+
+  <!-- 7.4 Cart -->
+  <h3>7.4 The shopping cart</h3>
+  <div class="diagram"><div id="fc-cart"></div></div>
+  <p>The cart lives entirely in the browser (Redux + localStorage). The server is only involved at checkout, and it ignores the prices the browser sends.</p>
+
+  <!-- 7.5 Checkout -->
+  <h3>7.5 Checkout and payment</h3>
+  <div class="diagram"><div class="cap">Sequence</div><div id="sq-pay"></div></div>
+  <div class="diagram"><div class="cap">Flowchart: what the server checks when you press “Pay”</div><div id="fc-pay"></div></div>
+  <div class="warn"><b>Why two steps?</b> Step 1 creates the order and asks Razorpay for a payment slot. Step 2 happens only after Razorpay confirms payment and sends a cryptographic signature. The server recomputes that signature itself; if it doesn't match, the order is marked <code>Failed</code> and no stock changes.</div>
+
+  <!-- 7.6 Admin product -->
+  <h3>7.6 Admin: adding a product with an image</h3>
+  <div class="diagram"><div class="cap">Sequence</div><div id="sq-admin"></div></div>
+  <p>The photo is only stored on the server for a split second (<code>backend/uploads</code>), then uploaded to Cloudinary and deleted. That's why the folder looks empty.</p>
+
+  <!-- 7.7 Order lifecycle -->
+  <h3>7.7 Life of an order</h3>
+  <div class="diagram">
+    <svg viewBox="0 0 860 150" width="100%" style="min-width:720px">
+      <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#a1a1aa"/></marker></defs>
+      <g font-size="13" text-anchor="middle">
+        <rect x="10" y="20" width="150" height="46" rx="23" fill="#3b82f622" stroke="#3b82f6" stroke-width="2"/><text x="85" y="40" fill="#fff" font-weight="700">Created</text><text x="85" y="56" fill="#a1a1aa" font-size="11">payment slot made</text>
+        <rect x="210" y="20" width="150" height="46" rx="23" fill="#22c55e22" stroke="#22c55e" stroke-width="2"/><text x="285" y="40" fill="#fff" font-weight="700">Paid + Pending</text><text x="285" y="56" fill="#a1a1aa" font-size="11">stock reduced, email sent</text>
+        <rect x="410" y="20" width="150" height="46" rx="23" fill="#f9731622" stroke="#f97316" stroke-width="2"/><text x="485" y="40" fill="#fff" font-weight="700">Shipped</text><text x="485" y="56" fill="#a1a1aa" font-size="11">admin sets it</text>
+        <rect x="610" y="20" width="150" height="46" rx="23" fill="#a78bfa22" stroke="#a78bfa" stroke-width="2"/><text x="685" y="40" fill="#fff" font-weight="700">Delivered</text><text x="685" y="56" fill="#a1a1aa" font-size="11">admin sets it</text>
+        <rect x="210" y="96" width="150" height="40" rx="20" fill="#ef444422" stroke="#ef4444" stroke-width="2"/><text x="285" y="121" fill="#fff" font-weight="700">Failed (bad signature)</text>
+        <rect x="410" y="96" width="150" height="40" rx="20" fill="#ef444422" stroke="#ef4444" stroke-width="2"/><text x="485" y="121" fill="#fff" font-weight="700">Cancelled</text>
+      </g>
+      <g stroke="#a1a1aa" stroke-width="2" marker-end="url(#ar2)">
+        <line x1="160" y1="43" x2="206" y2="43"/><line x1="360" y1="43" x2="406" y2="43"/><line x1="560" y1="43" x2="606" y2="43"/>
+        <line x1="120" y1="66" x2="215" y2="100" stroke-dasharray="4 3"/><line x1="320" y1="66" x2="440" y2="96" stroke-dasharray="4 3"/>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- ============ 8. SECURITY ============ -->
+<section id="security">
+  <h2>8. Security features</h2>
+  <p class="lead">What protects the shop and its customers, in plain words.</p>
+  <div class="tbl"><table>
+    <tr><th>Protection</th><th>What it stops</th><th>Where</th></tr>
+    <tr><td>Password hashing (bcrypt)</td><td>Leaked database ≠ leaked passwords</td><td><code>model/User.js</code></td></tr>
+    <tr><td>JWT login tokens</td><td>Faking who you are</td><td><code>authMiddleware.js</code></td></tr>
+    <tr><td>Email verification (hashed OTP)</td><td>Fake or someone else's email; the code can't be read from the DB</td><td><code>authController.js</code></td></tr>
+    <tr><td>Role check (<code>admin</code>)</td><td>Normal users reaching admin features</td><td><code>adminMiddleware.js</code></td></tr>
+    <tr><td>Server-side pricing</td><td>Editing prices in browser dev tools</td><td><code>utils/pricing.js</code></td></tr>
+    <tr><td>Payment signature (HMAC-SHA256)</td><td>Pretending a payment succeeded</td><td><code>paymentController.js</code></td></tr>
+    <tr><td>Atomic stock update</td><td>Two people buying the last item at once</td><td><code>utils/pricing.js</code></td></tr>
+    <tr><td>Idempotent verify</td><td>Double-clicks charging/reducing stock twice</td><td><code>paymentController.js</code></td></tr>
+    <tr><td>Input validation + body scrubbing</td><td>Bad data and NoSQL injection like <code>{"$gt":""}</code></td><td><code>validators.js</code>, <code>sanitize.js</code></td></tr>
+    <tr><td>Rate limiting</td><td>Spam and password guessing (300 req / 15 min; auth 20 / 15 min)</td><td><code>index.js</code></td></tr>
+    <tr><td>Helmet + CORS allow-list</td><td>Common browser attacks; unknown sites calling the API</td><td><code>index.js</code></td></tr>
+    <tr><td>Same message for wrong email/password + timing equaliser</td><td>Learning which emails have accounts</td><td><code>loginUser</code></td></tr>
+    <tr><td>Upload limits (5 MB, images only)</td><td>Huge or malicious files</td><td><code>productRoutes.js</code></td></tr>
+  </table></div>
+</section>
+
+<!-- ============ 9. API ============ -->
+<section id="api">
+  <h2>9. API reference</h2>
+  <p class="lead">All addresses start with the server URL (locally <code>http://localhost:5000</code>).</p>
+  <div class="tbl"><table>
+    <tr><th>Method</th><th>Endpoint</th><th>Who</th><th>What it does</th></tr>
+    <tr><td class="m-post">POST</td><td>/api/auth/register</td><td><span class="badge b-pub">Public</span></td><td>Create account. Body: name, email, password, accountType (<code>user</code>|<code>test</code>)</td></tr>
+    <tr><td class="m-post">POST</td><td>/api/auth/verify-email</td><td><span class="badge b-pub">Public</span></td><td>Email + 6-digit OTP → marks verified, returns token</td></tr>
+    <tr><td class="m-post">POST</td><td>/api/auth/resend-otp</td><td><span class="badge b-pub">Public</span></td><td>New OTP (60 s cooldown)</td></tr>
+    <tr><td class="m-post">POST</td><td>/api/auth/login</td><td><span class="badge b-pub">Public</span></td><td>Returns token; 403 <code>EMAIL_NOT_VERIFIED</code> if unverified</td></tr>
+    <tr><td class="m-get">GET</td><td>/api/auth/me</td><td><span class="badge b-user">User</span></td><td>Your profile</td></tr>
+    <tr><td class="m-get">GET</td><td>/api/auth/users</td><td><span class="badge b-admin">Admin</span></td><td>All users</td></tr>
+    <tr><td class="m-get">GET</td><td>/api/products?page&amp;limit&amp;category&amp;search</td><td><span class="badge b-pub">Public</span></td><td>List products (limit ≤ 100)</td></tr>
+    <tr><td class="m-get">GET</td><td>/api/products/:id</td><td><span class="badge b-pub">Public</span></td><td>One product</td></tr>
+    <tr><td class="m-post">POST</td><td>/api/products</td><td><span class="badge b-admin">Admin</span></td><td>Create (form-data with <code>image</code>)</td></tr>
+    <tr><td class="m-put">PUT</td><td>/api/products/:id</td><td><span class="badge b-admin">Admin</span></td><td>Update</td></tr>
+    <tr><td class="m-del">DELETE</td><td>/api/products/:id</td><td><span class="badge b-admin">Admin</span></td><td>Delete</td></tr>
+    <tr><td class="m-post">POST</td><td>/api/payment/order</td><td><span class="badge b-user">User</span></td><td>Price cart on server, create Razorpay + local order</td></tr>
+    <tr><td class="m-post">POST</td><td>/api/payment/verify</td><td><span class="badge b-user">User</span></td><td>Verify signature, finalise order</td></tr>
+    <tr><td class="m-get">GET</td><td>/api/orders/myorders</td><td><span class="badge b-user">User</span></td><td>Your orders</td></tr>
+    <tr><td class="m-get">GET</td><td>/api/orders</td><td><span class="badge b-admin">Admin</span></td><td>All orders</td></tr>
+    <tr><td class="m-put">PUT</td><td>/api/orders/:id/status</td><td><span class="badge b-admin">Admin</span></td><td>Set Pending / Shipped / Delivered / Cancelled</td></tr>
+    <tr><td class="m-get">GET</td><td>/api/analytics</td><td><span class="badge b-admin">Admin</span></td><td>Dashboard totals</td></tr>
+    <tr><td class="m-get">GET</td><td>/health</td><td><span class="badge b-pub">Public</span></td><td>Is the server alive?</td></tr>
+  </table></div>
+  <p><b>Status codes you'll meet:</b> 200 OK · 201 Created · 400 bad input · 401 not logged in · 403 not allowed (or not verified) · 404 not found · 409 conflict (e.g. out of stock) · 429 too many requests · 502 payment gateway problem.</p>
+</section>
+
+<!-- ============ 10. RUN ============ -->
+<section id="run">
+  <h2>10. Run it yourself</h2>
+  <ol class="steps">
+    <li>Install <b>Node.js 18+</b>. Have a MongoDB Atlas database, and (for full features) Cloudinary, Razorpay and a Gmail App Password.</li>
+    <li>In the project root run <code>npm run install-all</code>.</li>
+    <li>Copy <code>backend/.env.example</code> to <code>backend/.env</code> and fill in the values (table below).</li>
+    <li>Optional: <code>npm run seed</code> for sample users and products.</li>
+    <li>Run <code>npm run dev</code>. Open <code>http://localhost:3000</code>.</li>
+  </ol>
+  <div class="tbl"><table>
+    <tr><th>.env variable</th><th>Used for</th></tr>
+    <tr><td>MONGO_URI</td><td>Database connection</td></tr>
+    <tr><td>JWT_SECRET, JWT_EXPIRES_IN</td><td>Signing login tokens (default 3 days)</td></tr>
+    <tr><td>EMAIL_USER, EMAIL_PASS</td><td>Gmail address + <b>App Password</b> for OTP/order emails</td></tr>
+    <tr><td>CLOUDINARY_CLOUD_NAME / API_KEY / API_SECRET</td><td>Product image hosting</td></tr>
+    <tr><td>RAZORPAY_KEY_ID / KEY_SECRET</td><td>Payments</td></tr>
+    <tr><td>FRONTEND_URL, PORT, NODE_ENV</td><td>CORS origin, server port, mode</td></tr>
+  </table></div>
+  <div class="warn"><b>Never share or commit <code>.env</code>.</b> It holds your secrets. <code>.gitignore</code> already excludes it.</div>
+</section>
+
+<!-- ============ 11. GLOSSARY ============ -->
+<section id="glossary">
+  <h2>11. Glossary for beginners</h2>
+  <div class="tbl"><table>
+    <tr><th>Word</th><th>Plain meaning</th></tr>
+    <tr><td>API</td><td>A menu of addresses the frontend can call to ask the backend for things.</td></tr>
+    <tr><td>Endpoint / route</td><td>One address on that menu, e.g. <code>/api/products</code>.</td></tr>
+    <tr><td>HTTP methods</td><td>GET = read, POST = create, PUT = update, DELETE = remove.</td></tr>
+    <tr><td>JSON</td><td>The text format the frontend and backend use to exchange data.</td></tr>
+    <tr><td>Middleware</td><td>A checkpoint a request passes through before reaching the real code.</td></tr>
+    <tr><td>Controller</td><td>The function that does the actual work for a route.</td></tr>
+    <tr><td>Model / schema</td><td>The blueprint describing what a User, Product or Order looks like.</td></tr>
+    <tr><td>JWT (token)</td><td>A signed ID badge proving you're logged in.</td></tr>
+    <tr><td>Hash</td><td>A one-way scramble. You can check a password against it but never read it back.</td></tr>
+    <tr><td>OTP</td><td>One-time code emailed to confirm your address.</td></tr>
+    <tr><td>Component</td><td>A reusable piece of UI in React (a button, a card, a whole page).</td></tr>
+    <tr><td>State</td><td>Data a component remembers while you use the app.</td></tr>
+    <tr><td>Redux</td><td>A shared box of state any component can read, used here for the cart.</td></tr>
+    <tr><td>localStorage</td><td>A small storage area in your browser that survives refreshes.</td></tr>
+    <tr><td>CORS</td><td>Browser rule about which websites may call which servers.</td></tr>
+    <tr><td>Rate limit</td><td>A cap on how many requests one visitor can make in a time window.</td></tr>
+    <tr><td>Signature (HMAC)</td><td>A tamper-proof stamp Razorpay adds to prove a payment is genuine.</td></tr>
+    <tr><td>Seed</td><td>Filling an empty database with starter data.</td></tr>
+  </table></div>
+</section>
+
+<!-- ============ 12. TROUBLESHOOTING ============ -->
+<section id="trouble">
+  <h2>12. Troubleshooting</h2>
+  <div class="tbl"><table>
+    <tr><th>Symptom</th><th>Probable cause</th><th>Fix</th></tr>
+    <tr><td>Shop / Home are empty</td><td>Backend down, wrong <code>MONGO_URI</code>, or no products</td><td>Check the backend terminal; run <code>npm run seed</code></td></tr>
+    <tr><td>No OTP email</td><td>Email vars missing or not an App Password; Spam folder</td><td>Fix <code>EMAIL_USER/EMAIL_PASS</code>, or use Register as Test User</td></tr>
+    <tr><td>“Please verify your email first”</td><td>Account not verified</td><td>Enter the code on /verify-email, or press Resend</td></tr>
+    <tr><td>“Payments are not configured”</td><td>Razorpay keys missing</td><td>Add them to <code>.env</code> and restart backend</td></tr>
+    <tr><td>Image upload fails</td><td>Cloudinary keys wrong; file &gt; 5 MB or not an image</td><td>Check keys and file</td></tr>
+    <tr><td>“Too many requests”</td><td>Rate limiter tripped</td><td>Wait 15 minutes</td></tr>
+    <tr><td>Changes to <code>.env</code> not applied</td><td>Server reads it only at startup</td><td>Restart the backend</td></tr>
+  </table></div>
+</section>
+
+<p style="margin-top:60px;color:var(--muted);text-align:center">ShopNow project guide · open this file in any browser, no internet or server needed.</p>
+</main>
+</div>
+
+<script>
+/* ---------- tiny diagram helpers (no external libraries) ---------- */
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* Flowchart: steps = [{k:'start|step|decision|end|bad', t:'text', no:'what happens on No'}] */
+function flow(id, steps) {
+  const el = document.getElementById(id);
+  el.className = 'flow';
+  el.innerHTML = steps.map((s, i) => {
+    const cls = s.k === 'decision' ? 'step decision' : s.k === 'start' ? 'step start' : s.k === 'end' ? 'step end' : s.k === 'bad' ? 'step end bad' : 'step';
+    const inner = s.k === 'decision' ? `<b>${esc(s.t)}</b>` : esc(s.t);
+    const yes = s.k === 'decision' ? '<div class="arrow">yes</div>' : '<div class="arrow"></div>';
+    const side = s.no ? `<div class="side">${esc(s.no)}</div>` : '';
+    return `<div class="${cls}">${inner}</div>${side}${i < steps.length - 1 ? yes : ''}`;
+  }).join('');
+}
+
+/* Sequence diagram: actors = ['Browser',...], msgs = [[from,to,'text', dashed?], ...] */
+function seq(id, actors, msgs) {
+  const el = document.getElementById(id);
+  const W = 190, top = 54, step = 50, n = actors.length;
+  const w = n * W, h = top + msgs.length * step + 30;
+  const x = i => i * W + W / 2;
+  let s = `<svg viewBox="0 0 ${w} ${h}" width="100%" style="min-width:${Math.max(w, 640)}px">
+  <defs><marker id="${id}-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f97316"/></marker>
+  <marker id="${id}-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#a1a1aa"/></marker></defs>`;
+  const colors = ['#3b82f6', '#f97316', '#22c55e', '#a78bfa', '#facc15', '#ef4444'];
+  actors.forEach((a, i) => {
+    s += `<line x1="${x(i)}" y1="40" x2="${x(i)}" y2="${h - 10}" stroke="#3f3f46" stroke-dasharray="5 5"/>`;
+    s += `<rect x="${x(i) - 72}" y="6" width="144" height="34" rx="9" fill="${colors[i % 6]}22" stroke="${colors[i % 6]}" stroke-width="2"/>`;
+    s += `<text x="${x(i)}" y="28" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">${esc(a)}</text>`;
+  });
+  msgs.forEach(([f, t, text, back], k) => {
+    const y = top + k * step + 24;
+    const col = back ? '#a1a1aa' : '#f97316';
+    const mk = back ? `${id}-b` : `${id}-a`;
+    if (f === t) {
+      const xx = x(f);
+      s += `<path d="M${xx} ${y - 12} h38 v22 h-38" fill="none" stroke="${col}" stroke-width="2" marker-end="url(#${mk})"/>`;
+      s += `<text x="${xx + 46}" y="${y + 3}" fill="#e4e4e7" font-size="12">${esc(text)}</text>`;
+    } else {
+      s += `<line x1="${x(f)}" y1="${y}" x2="${x(t) + (t > f ? -3 : 3)}" y2="${y}" stroke="${col}" stroke-width="2" ${back ? 'stroke-dasharray="6 4"' : ''} marker-end="url(#${mk})"/>`;
+      s += `<text x="${(x(f) + x(t)) / 2}" y="${y - 7}" text-anchor="middle" fill="#e4e4e7" font-size="12">${esc(text)}</text>`;
+    }
+  });
+  el.innerHTML = s + '</svg>';
+}
+
+/* ---------- diagrams ---------- */
+flow('fc-guard', [
+  {k:'start', t:'You open a protected page, e.g. /cart or /admin'},
+  {k:'decision', t:'Are you logged in? (token in AuthContext)', no:'Redirected to /login (and sent back after login)'},
+  {k:'decision', t:'Admin page? Is your role “admin”?', no:'Redirected away — normal users cannot see admin pages'},
+  {k:'end', t:'Page is shown'}
+]);
+
+flow('fc-pipeline', [
+  {k:'start', t:'Request arrives at Express (index.js)'},
+  {k:'step', t:'1. helmet — adds security headers'},
+  {k:'step', t:'2. cors — only allowed websites may call the API'},
+  {k:'step', t:'3. express.json — reads the JSON body (max 1 MB)'},
+  {k:'step', t:'4. sanitizeBody — strips $ operators (NoSQL injection)'},
+  {k:'decision', t:'5. Rate limiter OK? (300/15 min · auth routes 20/15 min)', no:'429 Too many requests'},
+  {k:'step', t:'6. Route matched → validators check the data → protect / admin if required'},
+  {k:'step', t:'7. Controller does the work (database, email, payment…)'},
+  {k:'end', t:'JSON reply — or errorHandler turns any error into a clean message'}
+]);
+
+seq('sq-register', ['Browser','Express API','MongoDB','Gmail'], [
+  [0,1,'POST /api/auth/register {name,email,password}'],
+  [1,2,'save user (verified:false) + hashed OTP'],
+  [2,1,'saved ✓', true],
+  [1,3,'send email with 6-digit code'],
+  [1,0,'201 {requiresVerification:true}', true],
+  [0,0,'go to /verify-email'],
+  [0,1,'POST /api/auth/verify-email {email, otp}'],
+  [1,2,'compare hash, check expiry & attempts'],
+  [1,2,'set verified:true (same record)'],
+  [1,0,'200 + JWT token → logged in', true]
+]);
+
+flow('fc-register', [
+  {k:'start', t:'User fills name, email, password'},
+  {k:'step', t:'User presses one of two buttons'},
+  {k:'step', t:'“Register as Test User” → saved verified:true, logged in at once ✅'},
+  {k:'step', t:'“Register” → is this email already verified?', no:'(if yes) “User already exists”'},
+  {k:'step', t:'Create (or refresh) the unverified account and email a new OTP'},
+  {k:'step', t:'Go to /verify-email and type the code'},
+  {k:'decision', t:'Code correct, not expired, under 5 tries?', no:'Error toast — retry or press Resend (after 60 s)'},
+  {k:'end', t:'verified = true → logged in → Home'}
+]);
+
+seq('sq-login', ['Browser','Express API','MongoDB'], [
+  [0,1,'POST /api/auth/login {email,password}'],
+  [1,2,'find user by email'],
+  [2,1,'user + password hash', true],
+  [1,1,'bcrypt compare, check verified'],
+  [1,0,'200 {name, role, token}', true],
+  [0,0,'save in AuthContext + localStorage']
+]);
+
+flow('fc-login', [
+  {k:'start', t:'User submits email + password'},
+  {k:'decision', t:'Email exists and password matches?', no:'401 “Invalid credentials” (same message either way)'},
+  {k:'decision', t:'Account verified?', no:'403 EMAIL_NOT_VERIFIED → app opens /verify-email and sends a new code'},
+  {k:'step', t:'Server signs a JWT (valid 3 days)'},
+  {k:'end', t:'Browser stores it → “Welcome back” toast → Home'}
+]);
+
+seq('sq-browse', ['Browser (Shop)','Express API','MongoDB'], [
+  [0,1,'GET /api/products?limit=100'],
+  [1,1,'validate page/limit'],
+  [1,2,'find products + count'],
+  [2,1,'rows', true],
+  [1,0,'{products, page, pages, total}', true],
+  [0,0,'render ProductCards']
+]);
+
+flow('fc-cart', [
+  {k:'start', t:'Click “Add to cart” on a product page'},
+  {k:'step', t:'Redux addToCart({productId, name, price, imageUrl, qty})'},
+  {k:'step', t:'Cart saved to localStorage → survives refresh; Navbar count updates'},
+  {k:'step', t:'Toast: “<product> added to your cart”'},
+  {k:'decision', t:'Click Checkout — are you logged in?', no:'Sent to /login first'},
+  {k:'end', t:'Checkout page with shipping form'}
+]);
+
+seq('sq-pay', ['Browser','Express API','Razorpay','MongoDB'], [
+  [0,1,'POST /payment/order {items:[{productId,qty}], address}'],
+  [1,3,'read real prices & stock'],
+  [1,2,'create payment order (amount in paise)'],
+  [2,1,'razorpay order id', true],
+  [1,3,'save Order (paymentStatus: Created)'],
+  [1,0,'order id + public key', true],
+  [0,2,'customer pays in Razorpay pop-up'],
+  [2,0,'payment id + signature', true],
+  [0,1,'POST /payment/verify {ids, signature}'],
+  [1,1,'recompute HMAC, compare'],
+  [1,3,'reduce stock, mark Paid'],
+  [1,0,'success → cart cleared → /ordersuccess', true]
+]);
+
+flow('fc-pay', [
+  {k:'start', t:'POST /api/payment/verify'},
+  {k:'decision', t:'Does this order belong to the logged-in user?', no:'403 Not authorized'},
+  {k:'decision', t:'Is the Razorpay signature valid?', no:'Order marked Failed — 400 Invalid signature'},
+  {k:'step', t:'Already Paid (double-click / retry)? Return the same order — nothing changes twice'},
+  {k:'step', t:'Reduce stock atomically — one update per product'},
+  {k:'decision', t:'Enough stock for every item?', no:'Undo changes, 409 “just went out of stock”'},
+  {k:'step', t:'Mark order Paid, store paymentId (unique), send confirmation email'},
+  {k:'end', t:'200 Payment verified successfully'}
+]);
+
+seq('sq-admin', ['Admin browser','Express API','Cloudinary','MongoDB'], [
+  [0,1,'POST /api/products (form-data + image + Bearer token)'],
+  [1,1,'protect → admin → multer saves temp file'],
+  [1,1,'validate name, price, stock…'],
+  [1,2,'upload temp file'],
+  [2,1,'secure_url + public_id', true],
+  [1,1,'delete temp file'],
+  [1,3,'create Product with imageUrl'],
+  [1,0,'201 product → toast “Product created”', true]
+]);
+</script>
+</body>
+</html>
