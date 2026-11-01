@@ -1,5 +1,4 @@
 const dotenv = require("dotenv");
-const bcrypt = require("bcryptjs");
 const connectDB = require("./config/db");
 const User = require("./model/User");
 const Product = require("./model/Product");
@@ -12,9 +11,6 @@ const seedData = async () => {
 
     await Promise.all([User.deleteMany({}), Product.deleteMany({})]);
 
-    const adminPassword = await bcrypt.hash("Admin@2026!", 10);
-    const userPassword = await bcrypt.hash("Aarav@2026!", 10);
-    const guestPassword = await bcrypt.hash("Meera@2026!", 10);
 
     const users = await User.insertMany([
       {

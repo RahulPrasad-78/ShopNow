@@ -1,71 +1,52 @@
 const Order = require("../model/Order");
-const sendEmail = require("../utils/sendEmail");
+const { AppError } = require("../utils/AppError");
 
-const addOrderItems = async (req, res) => {
-  try {
-    const { items, totalAmount, address, paymentId } = req.body;
-    if (items && items.length === 0) {
-      return res.status(400).json({ message: "No order items" });
-    } else {
-      const order = new Order({
-        userId: req.user._id,
-        items,
-        totalAmount,
-        address,
-        paymentId,
-      });
-      const createdOrder = await order.save();
+// Order creation lives in paymentController.createOrder, which prices the cart
+// server-side. The addOrderItems handler that used to be here trusted the
+// client's totalAmount and paymentId outright and has been removed.
 
-      // Send Order Confirmation Email
-      const message = `
-        <h2>Order Confirmation</h2>
-        <p>Hello ${req.user.name},</p>
-        <p>Your order has been successfully placed! Order ID: <strong>${createdOrder._id}</strong></p>
-        <p>Total Amount Paid: $${totalAmount.toFixed(2)}</p>
-        <p>It will be shipped to: ${address.street}, ${address.city}</p>
-        <p>Thank you for shopping with ShopNow!</p>
-      `;
+const getMyOrders = async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
 
-      await sendEmail(req.user.email, "ShopNow - Order Confirmation", message);
+  const [orders, total] = await Promise.all([
+    Order.find({ userId: req.user._id })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Order.countDocuments({ userId: req.user._id }),
+  ]);
 
-      res.status(201).json(createdOrder);
-    }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  res.json({ orders, page, pages: Math.ceil(total / limit), total });
 };
 
-const getMyOrders = async (req, res) => {
-  try {
-    const orders = await Order.find({ userId: req.user._id });
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+const getOrders = async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
+
+  const [orders, total] = await Promise.all([
+    Order.find({})
+      .populate("userId", "id name email")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Order.countDocuments({}),
+  ]);
+
+  res.json({ orders, page, pages: Math.ceil(total / limit), total });
 };
 
-const getOrders = async (req, res) => {
-  try {
-    const orders = await Order.find({}).populate("userId", "id name");
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+const updateOrderStatus = async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) return next(new AppError("Order not found", 404));
+
+  order.status = req.body.status;
+  const updatedOrder = await order.save();
+  res.json(updatedOrder);
 };
 
-const updateOrderStatus = async (req, res) => {
-  try {
-    const order = await Order.findById(req.params.id);
-    if (order) {
-      order.status = req.body.status || order.status;
-      const updatedOrder = await order.save();
-      res.json(updatedOrder);
-    } else {
-      res.status(404).json({ message: "Order not found" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-module.exports = { addOrderItems, getMyOrders, getOrders, updateOrderStatus };
+module.exports = { getMyOrders, getOrders, updateOrderStatus };

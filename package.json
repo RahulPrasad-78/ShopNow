@@ -1,11 +1,10 @@
 {
   "name": "shopnow",
   "version": "1.0.0",
-  "description": "",
+  "description": "ShopNow - Full Stack E-Commerce Application",
   "license": "ISC",
-  "author": "",
-  "type": "commonjs",
-  "main": "index.js",
+  "author": "Rahul",
+  "engines": { "node": ">=18" },
   "scripts": {
     "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "build": "cd frontend && npm install && npm run build",
@@ -13,8 +12,6 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "npm --prefix backend run dev",
     "dev:client": "npm --prefix frontend start",
-    "start:backend": "npm --prefix backend run dev",
-    "start:frontend": "npm --prefix frontend start",
     "seed": "npm --prefix backend run seed"
   },
   "dependencies": {

@@ -2,13 +2,12 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "Shopnow(backend)",
-  "keywords": [
-    "ecom"
-  ],
+  "keywords": ["ecom"],
   "license": "ISC",
   "author": "Rahul",
   "type": "commonjs",
   "main": "index.js",
+  "engines": { "node": ">=18" },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
@@ -20,10 +19,13 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.2",
     "multer": "^2.2.0",
-    "nodemailer": "^9.0.1",
+    "nodemailer": "^7.0.3",
     "razorpay": "^2.9.6"
   },
   "devDependencies": {
