@@ -1,41 +1,41 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useNotify } from '../context/NotificationContext';
 
 const AdminProducts = () => {
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const { toast, confirm } = useNotify();
 
+  // Access is enforced by <AdminRoute>, so `user` is a logged-in admin here.
   useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      navigate('/');
-    }
-  }, [user, navigate]);
-
-  useEffect(() => {
-    if (!user || user.role !== 'admin') return;
     const fetchProducts = async () => {
-      const res = await fetch('/api/products');
+      const res = await fetch('/api/products?limit=100');
       const data = await res.json();
-      setProducts(Array.isArray(data) ? data : []);
+      setProducts(Array.isArray(data) ? data : data.products ?? []);
     };
     fetchProducts();
-  }, [user]);
-
-  if (!user || user.role !== 'admin') {
-    return null;
-  }
+  }, []);
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you strictly sure you want to delete this?')) {
-      const res = await fetch(`/api/products/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
-      if (res.ok) {
-        setProducts(products.filter(p => p._id !== id));
-      }
+    const ok = await confirm({
+      title: 'Delete this product?',
+      message: 'This will remove the product from your store. This action cannot be undone.',
+      confirmText: 'Delete',
+      danger: true,
+    });
+    if (!ok) return;
+
+    const res = await fetch(`/api/products/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${user.token}` }
+    });
+    if (res.ok) {
+      setProducts(products.filter(p => p._id !== id));
+      toast.success('Product deleted');
+    } else {
+      toast.error('Could not delete the product');
     }
   };
 

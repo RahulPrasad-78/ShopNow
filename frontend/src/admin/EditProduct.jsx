@@ -1,35 +1,38 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useNotify } from '../context/NotificationContext';
 
 const EditProduct = () => {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+  const { toast } = useNotify();
+
   const [formData, setFormData] = useState({ name: '', description: '', price: '', category: '', stock: '' });
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Access is enforced by <AdminRoute>, so `user` is a logged-in admin here.
   useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      navigate('/');
-    }
-  }, [user, navigate]);
-
-  useEffect(() => {
-    if (!user || user.role !== 'admin') return;
     const fetchProduct = async () => {
       const res = await fetch(`/api/products/${id}`);
+      if (!res.ok) {
+        toast.error('Could not load that product');
+        navigate('/admin/products');
+        return;
+      }
       const data = await res.json();
-      setFormData({ name: data.name, description: data.description, price: data.price, category: data.category, stock: data.stock });
+      setFormData({
+        name: data.name ?? '',
+        description: data.description ?? '',
+        price: data.price ?? '',
+        category: data.category ?? '',
+        stock: data.stock ?? '',
+      });
     };
     fetchProduct();
-  }, [id, user]);
-
-  if (!user || user.role !== 'admin') {
-    return null;
-  }
+  }, [id, navigate, toast]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,8 +52,11 @@ const EditProduct = () => {
     });
     setLoading(false);
     if (res.ok) {
-      alert('Product updated successfully!');
+      toast.success('Product updated successfully!');
       navigate('/admin/products');
+    } else {
+      const data = await res.json().catch(() => ({}));
+      toast.error(data.message || 'Update failed');
     }
   };
 

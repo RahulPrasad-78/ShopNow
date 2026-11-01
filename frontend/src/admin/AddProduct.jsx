@@ -1,30 +1,23 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useNotify } from '../context/NotificationContext';
 
+// Access is enforced by <AdminRoute>, so `user` is a logged-in admin here.
 const AddProduct = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+  const { toast } = useNotify();
+
   const [formData, setFormData] = useState({
     name: '', description: '', price: '', category: '', stock: ''
   });
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      navigate('/');
-    }
-  }, [user, navigate]);
-
-  if (!user || user.role !== 'admin') {
-    return null;
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!image) return alert('Please select an image');
+    if (!image) return toast.warning('Please select an image');
     
     setLoading(true);
     const data = new FormData();
@@ -44,13 +37,14 @@ const AddProduct = () => {
       const responseData = await res.json();
       
       if (res.ok) {
-        alert('Product created successfully with Cloudinary Image URL!');
+        toast.success('Product created successfully!');
         navigate('/shop');
       } else {
-        alert(responseData.message || 'Error creating product');
+        toast.error(responseData.message || 'Error creating product');
       }
     } catch (error) {
       console.error(error);
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }

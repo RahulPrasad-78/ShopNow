@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/cartSlice";
+import { useNotify } from "../context/NotificationContext";
 import "../styles/product.css";
 
 const ProductDetail = () => {
@@ -9,6 +10,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+  const { toast } = useNotify();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -36,7 +38,7 @@ const ProductDetail = () => {
           qty: 1,
         }),
       );
-      alert("Successfully added to your cart!");
+      toast.success(`${product.name} added to your cart`);
     }
   };
 
