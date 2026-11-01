@@ -1,17 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 const AdminUsers = () => {
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
 
+  // Access is enforced by <AdminRoute>, so `user` is a logged-in admin here.
   useEffect(() => {
-    if (!user || user.role !== "admin") {
-      navigate("/");
-      return;
-    }
     const fetchUsers = async () => {
       const res = await fetch("/api/auth/user", {
         headers: { Authorization: `Bearer ${user.token}` },
@@ -20,11 +15,7 @@ const AdminUsers = () => {
       setUsers(Array.isArray(data) ? data : []);
     };
     fetchUsers();
-  }, [user, navigate]);
-
-  if (!user || user.role !== "admin") {
-    return null;
-  }
+  }, [user]);
 
   return (
     <div style={containerStyle}>
@@ -43,7 +34,7 @@ const AdminUsers = () => {
           <tbody>
             {users.map((u) => (
               <tr key={u._id} style={rowStyle}>
-                <td style={tdStyle}>{u._id.substring(0, 8)}...</td>
+                <td style={tdStyle}>{String(u._id).substring(0, 8)}...</td>
                 <td style={tdStyle}>{u.name}</td>
                 <td style={tdStyle}>{u.email}</td>
                 <td style={tdStyle}>
@@ -60,7 +51,7 @@ const AdminUsers = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    {u.role.toUpperCase()}
+                    {String(u.role || "user").toUpperCase()}
                   </span>
                 </td>
                 <td style={tdStyle}>

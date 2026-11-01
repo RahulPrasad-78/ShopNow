@@ -10,9 +10,9 @@ const Shop = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("/api/products");
+        const res = await fetch("/api/products?limit=100");
         const data = await res.json();
-        setProducts(Array.isArray(data) ? data : []);
+        setProducts(Array.isArray(data) ? data : data.products ?? []);
       } catch (error) {
         console.error(error);
         setProducts([]);

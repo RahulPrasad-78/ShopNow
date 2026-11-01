@@ -7,12 +7,8 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
 
+  // Access is enforced by <AdminRoute>, so `user` is a logged-in admin here.
   useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      navigate('/');
-      return;
-    }
-
     const fetchStats = async () => {
       try {
         const res = await fetch('/api/analytics', {
@@ -33,10 +29,6 @@ const AdminDashboard = () => {
     };
     fetchStats();
   }, [user, navigate]);
-
-  if (!user || user.role !== 'admin') {
-    return null;
-  }
 
   const cardStyle = {
     padding: '25px',

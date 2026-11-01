@@ -10,7 +10,8 @@ const Home = () => {
       try {
         const res = await fetch("/api/products");
         const data = await res.json();
-        setProducts(Array.isArray(data) ? data.slice(0, 4) : []); // Featured products
+        const list = Array.isArray(data) ? data : data.products ?? [];
+        setProducts(list.slice(0, 4)); // Featured products
       } catch (error) {
         console.error(error);
         setProducts([]);
