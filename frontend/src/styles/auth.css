@@ -63,6 +63,79 @@
   box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
 }
 
+.password-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.password-field input {
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #a1a1aa;
+  cursor: pointer;
+  display: flex;
+  padding: 4px;
+}
+
+.password-toggle:hover {
+  color: #f97316;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #f97316;
+  color: #f97316;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(249, 115, 22, 0.12);
+}
+
+.auth-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-hint {
+  color: #71717a;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.auth-sub {
+  margin-top: 0 !important;
+}
+
+.otp-input {
+  text-align: center;
+  font-size: 26px !important;
+  letter-spacing: 12px;
+  font-weight: 700;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #f97316;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+}
+
+.link-button:disabled {
+  color: #71717a;
+}
+
 .auth-form p {
   text-align: center;
   margin-top: 15px;

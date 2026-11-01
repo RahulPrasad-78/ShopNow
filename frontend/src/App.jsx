@@ -8,6 +8,7 @@ import ReturnPolicy from "./pages/ReturnPolicy";
 import Disclaimer from "./pages/Disclaimer";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import VerifyEmail from "./pages/VerifyEmail";
 import ProductDetails from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Profile from "./pages/Profile";
@@ -20,31 +21,41 @@ import AdminOrders from "./admin/AdminOrders";
 import AdminUsers from "./admin/AdminUsers";
 import AddProduct from "./admin/AddProduct";
 import EditProduct from "./admin/EditProduct";
+import AdminRoute from "./components/AdminRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/return" element={<ReturnPolicy />} />
         <Route path="/disclaimer" element={<Disclaimer />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/shop" element={<Shop />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/ordersuccess" element={<OrderSuccess />} />
-        <Route path="/order-success" element={<OrderSuccess />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/products" element={<AdminProducts />} />
-        <Route path="/admin/orders" element={<AdminOrders />} />
-        <Route path="/admin/users" element={<AdminUsers />} />
-        <Route path="/admin/add-product" element={<AddProduct />} />
-        <Route path="/admin/edit-product/:id" element={<EditProduct />} />
+
+        {/* Protected user routes — requires authentication */}
+        <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+        <Route path="/ordersuccess" element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>} />
+        <Route path="/order-success" element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>} />
+
+        {/* Admin-only routes */}
+        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+        <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+        <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+        <Route path="/admin/add-product" element={<AdminRoute><AddProduct /></AdminRoute>} />
+        <Route path="/admin/edit-product/:id" element={<AdminRoute><EditProduct /></AdminRoute>} />
+
+        {/* Catch-all fallback */}
         <Route path="*" element={<Home />} />
       </Routes>
       <Footer />
