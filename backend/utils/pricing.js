@@ -32,7 +32,11 @@ const priceCart = async (rawItems) => {
   }
 
   const ids = [...wanted.keys()];
-  const products = await Product.find({ _id: { $in: ids } }).lean();
+  // Soft-deleted products can no longer be bought, even from an old cart.
+  const products = await Product.find({
+    _id: { $in: ids },
+    deletedAt: { $exists: false },
+  }).lean();
   const byId = new Map(products.map((p) => [String(p._id), p]));
 
   const items = [];

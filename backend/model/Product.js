@@ -37,6 +37,11 @@ const productShema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  // Soft delete: set instead of removing the document so order history that
+  // references the product stays intact. Absent means the product is live.
+  deletedAt: {
+    type: Date,
+  },
   rating: {
     type: Number,
     default: 0,
